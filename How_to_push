@@ -1,4 +1,4 @@
 git add . (Nge add datanya)
 git commit -m "pesan" (Pesan Updatenya)
 git push -u origin (Branch nya) <Memperbarui yang di github>
-git marge
+git marge origin/
