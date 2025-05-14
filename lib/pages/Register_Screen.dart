@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/service/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -8,6 +11,13 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 24),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Email Address',
                     prefixIcon: Icon(Icons.email_outlined),
@@ -56,6 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: _nameController,
                   decoration: InputDecoration(
                     hintText: 'Name',
                     prefixIcon: Icon(Icons.person_outline),
@@ -66,6 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -77,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: _confirmPasswordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Confirm Password',
@@ -88,9 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () {
-                    // Tambahkan logika untuk register di sini
-                  },
+                  onPressed: () => AuthService().registerWithEmailPassword(context, _emailController.text, _passwordController.text, _nameController.text), // Panggil metode register saat tombol ditekan
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
                     minimumSize: Size(double.infinity, 50),

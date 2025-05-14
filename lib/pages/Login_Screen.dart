@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/service/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,6 +10,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+
+  // Fungsi untuk login dengan email dan password
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 32),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Email Address',
                     prefixIcon: Icon(Icons.email_outlined),
@@ -66,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -77,9 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 50),
                 ElevatedButton(
-                  onPressed: () {
-                    context.goNamed(myRouter.Home); // Navigasi ke halaman home
-                  },
+                  onPressed: () => AuthService().loginWithEmailPassword(context,_emailController.text, _passwordController.text), // Panggil fungsi _login
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
                     minimumSize: Size(double.infinity, 50),
@@ -95,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: () {},
-                  icon: Image.network("https://res.cloudinary.com/dlnfp5fej/image/upload/v1747119026/vp0skepjrws3a97e7xwh.png", width: 20,height: 20,),
+                  icon: Image.network("https://res.cloudinary.com/dlnfp5fej/image/upload/v1747119026/vp0skepjrws3a97e7xwh.png", width: 20,height: 20),
                   label: Text(
                     'Continue with Google',
                     style: TextStyle(color: Colors.black),
@@ -118,12 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         context.goNamed(myRouter.Regis); // Navigasi ke halaman register
                       },
-                      child: 
-                      Text(
+                      child: Text(
                         'Create an Account',
                         style: TextStyle(
                           color: Colors.blueGrey[600],
-                          
                         ),
                       ),
                     ),
