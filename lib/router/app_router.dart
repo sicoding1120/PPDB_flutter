@@ -4,6 +4,9 @@ import 'package:ppdb_project/pages/Home_Screen.dart';
 import 'package:ppdb_project/pages/Login_Screen.dart';
 import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
+import 'package:ppdb_project/pages/isidata_ortu.dart';
+import 'package:ppdb_project/pages/pendaftaran.dart';
+import 'package:ppdb_project/pages/uploadDoc.dart';
 part 'route_name.dart';
 
 
@@ -33,4 +36,19 @@ final router = [
     name: myRouter.Home,
     builder: (context, state) => HomeScreen(),
   ),
+
+  GoRoute(path: "/pendaftaran",
+    name: myRouter.Pendaftaran,
+    builder: (context, state) => Pendaftaran(),
+  ),  
+
+   GoRoute(path: "/isidataOrtu",
+    name: myRouter.isidataOrtu,
+    builder: (context, state) => IsidataOrtu(),
+  ),  
+
+  GoRoute(path: "/uploaddoc",
+    name: myRouter.Uploaddoc,
+    builder: (context, state) => Uploaddoc(),
+  ),  
 ];

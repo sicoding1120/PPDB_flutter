@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                // Teks "Hai calon siswa 👋"
+               
                 Positioned(
                   top: 66.0, // Jarak 66 dari atas
                   left: 24.0, // Jarak dari kiri
@@ -75,6 +76,8 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.person_outline,
                   title: 'Pendaftaran Peserta Didik Baru',
                   onTap: () {
+
+                    context.go("/pendaftaran");
                     // Tambahkan logika untuk navigasi
                   },
                 ),

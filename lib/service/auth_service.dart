@@ -1,4 +1,6 @@
 // auth_service.dart
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,17 +17,17 @@ class AuthService {
     String name,
   ) async {
     try {
-      // Buat akun dengan email dan password
+     
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Update nama pengguna
+     
       await userCredential.user?.updateDisplayName(name);
 
       print('Registrasi berhasil, redirect ke login...');
-      context.go('/login'); // gunakan nama route yang benar
+      context.go('/login'); 
 
       return userCredential.user;
     }
@@ -95,6 +97,36 @@ Future<User?> loginWithEmailPassword(
   // Fungsi untuk logout
   Future<void> logout() async {
     await _auth.signOut();
+  }
+
+
+  Future<void> ForgotPassword(BuildContext context, String emailAddress) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailAddress);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Link reset password telah dikirim ke $emailAddress'),
+        ),
+      );
+      // Arahkan kembali ke halaman login
+      context.go('/login');
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'invalid-email') {
+        errorMessage = 'Email tidak valid.';
+      } else if (e.code == 'user-not-found') {
+        errorMessage = 'Tidak ada pengguna dengan email tersebut.';
+      } else {
+        errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan. Silakan coba lagi.')),
+      );
+    }
   }
 
   // Fungsi untuk mengambil user yang sedang login

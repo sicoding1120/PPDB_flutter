@@ -1,8 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/service/auth_service.dart';
 
-class ForgetScreen extends StatelessWidget {
+class ForgetScreen extends StatefulWidget {
+  @override
+  State<ForgetScreen> createState() => _ForgetScreenState();
+}
+
+class _ForgetScreenState extends State<ForgetScreen> {
+  final TextEditingController _emailController = TextEditingController();
+
+  void _sendResetEmail() {
+    String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email tidak boleh kosong!')),
+      );
+      return;
+    }
+
+    AuthService().ForgotPassword(context, email);
+
+    // Logika untuk mengirim email reset password
+    // Misalnya, menggunakan Firebase Auth
+    // FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Email reset password telah dikirim!')),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +78,7 @@ class ForgetScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Email Address',
                     prefixIcon: Icon(Icons.email_outlined),
@@ -61,7 +90,7 @@ class ForgetScreen extends StatelessWidget {
                 SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
-                    // Tambahkan logika untuk mengirim email reset password
+                    _sendResetEmail(); // Panggil fungsi untuk mengirim email reset password
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
@@ -71,6 +100,7 @@ class ForgetScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
+
                     'Kirim',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
