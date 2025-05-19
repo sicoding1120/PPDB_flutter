@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerConfig: GoRouter(routes: router), // Gunakan konfigurasi dari app_router.dart
+      routerConfig: goRouter, // Gunakan konfigurasi dari app_router.dart
     );
   }
 }
