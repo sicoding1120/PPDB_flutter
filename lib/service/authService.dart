@@ -95,8 +95,8 @@ Future<User?> loginWithEmailPassword(
 
 
   // Fungsi untuk logout
-  Future<void> logout() async {
-    await _auth.signOut();
+ Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
   }
 
 

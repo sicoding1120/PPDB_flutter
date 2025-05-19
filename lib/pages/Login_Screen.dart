@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
-import 'package:ppdb_project/service/auth_service.dart';
+import 'package:ppdb_project/service/authService.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

@@ -5,7 +5,9 @@ import 'package:ppdb_project/pages/Login_Screen.dart';
 import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
 import 'package:ppdb_project/pages/isidata_ortu.dart';
+import 'package:ppdb_project/pages/ktm.dart';
 import 'package:ppdb_project/pages/pendaftaran.dart';
+import 'package:ppdb_project/pages/profile.dart';
 import 'package:ppdb_project/pages/uploadDoc.dart';
 part 'route_name.dart';
 
@@ -50,5 +52,15 @@ final router = [
   GoRoute(path: "/uploaddoc",
     name: myRouter.Uploaddoc,
     builder: (context, state) => Uploaddoc(),
+  ),  
+
+   GoRoute(path: "/profile",
+    name: myRouter.profile,
+    builder: (context, state) => ProfilePage(),
+  ),  
+
+  GoRoute(path: "/KTM",
+    name: myRouter.KTM,
+    builder: (context, state) => KTM(),
   ),  
 ];

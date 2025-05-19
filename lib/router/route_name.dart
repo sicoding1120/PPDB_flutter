@@ -5,8 +5,10 @@ class myRouter {
   static const String Login = "/login";
   static const String Regis = "/regis";
   static const String Forget = "/Forget";
-  static const String Home = "/Home";
+  static const String Home = "/home";
   static const String Pendaftaran = "/pendaftaran";
   static const String isidataOrtu = "/isidataOrtu";
   static const String Uploaddoc = "/uploaddoc";
+   static const String profile = "/profile";
+   static const String KTM = "/KTM";
 }
