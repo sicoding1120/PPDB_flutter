@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
-import 'package:ppdb_project/service/auth_service.dart';
+import 'package:ppdb_project/service/authService.dart';
 
 class ForgetScreen extends StatefulWidget {
   @override
