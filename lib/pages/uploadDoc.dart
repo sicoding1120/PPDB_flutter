@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,10 +36,7 @@ class _uploaddocState extends State<Uploaddoc> {
         ),
         title: const Text(
           'isi data dokumen',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
       ),
@@ -48,10 +47,9 @@ class _uploaddocState extends State<Uploaddoc> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-               _buildUploadField(),
-                 const SizedBox(height: 35),
+              _buildUploadField(),
+              const SizedBox(height: 35),
               _buildButtonKirim(),
-             
             ],
           ),
         ),
@@ -80,8 +78,8 @@ class _uploaddocState extends State<Uploaddoc> {
     return TextFormField(
       controller: controller,
       decoration: _inputDecoration(hint),
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib diisi' : null,
+      validator:
+          (value) => value == null || value.isEmpty ? 'Wajib diisi' : null,
     );
   }
 
@@ -98,8 +96,8 @@ class _uploaddocState extends State<Uploaddoc> {
           jenisKelamin = value;
         });
       },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
+      validator:
+          (value) => value == null || value.isEmpty ? 'Wajib dipilih' : null,
     );
   }
 
@@ -116,8 +114,8 @@ class _uploaddocState extends State<Uploaddoc> {
           jenisTest = value;
         });
       },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
+      validator:
+          (value) => value == null || value.isEmpty ? 'Wajib dipilih' : null,
     );
   }
 
@@ -130,9 +128,9 @@ class _uploaddocState extends State<Uploaddoc> {
           const SnackBar(content: Text('Fitur upload belum tersedia')),
         );
       },
-      decoration: _inputDecoration('Upload Dokumen').copyWith(
-        suffixIcon: const Icon(Icons.upload_file),
-      ),
+      decoration: _inputDecoration(
+        'Upload Dokumen',
+      ).copyWith(suffixIcon: const Icon(Icons.upload_file)),
     );
   }
 
@@ -149,7 +147,6 @@ class _uploaddocState extends State<Uploaddoc> {
           }
         },
         style: ElevatedButton.styleFrom(
-          
           backgroundColor: const Color(0xFF00D084), // hijau
           foregroundColor: Colors.white, // teks putih
           shape: RoundedRectangleBorder(
@@ -157,7 +154,6 @@ class _uploaddocState extends State<Uploaddoc> {
           ),
         ),
         child: const Text(
-
           'Selanjutnya',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
