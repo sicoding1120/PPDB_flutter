@@ -11,10 +11,12 @@ class IsidataOrtu extends StatefulWidget {
 class _PendaftaranState extends State<IsidataOrtu> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController tempatLahirController = TextEditingController();
-  final TextEditingController tanggalLahirController = TextEditingController();
-  final TextEditingController nisnController = TextEditingController();
+  final TextEditingController namaayahController = TextEditingController();
+  final TextEditingController namaibuController = TextEditingController();
+  final TextEditingController pekerjaanayah= TextEditingController();
+  final TextEditingController pekerjaanibu = TextEditingController();
+  final TextEditingController notelpon = TextEditingController();
+  final TextEditingController alamatortu = TextEditingController();
   final TextEditingController dokumenController = TextEditingController();
 
   String? jenisKelamin;
@@ -48,17 +50,18 @@ class _PendaftaranState extends State<IsidataOrtu> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildInput(namaController, 'Nama ayah'),
+              _buildInput(namaayahController, 'Nama Ayah'),
               const SizedBox(height: 16),
-              _buildInput(namaController, 'Nama Ibu'),
+              _buildInput(namaibuController, 'Tempat Lahir'),
               const SizedBox(height: 16),
-                _buildInput(namaController, 'Pekerjaan Ayah'),
+              _buildInput(pekerjaanayah, 'Pekerjaan Ayah'),
               const SizedBox(height: 16),
-                _buildInput(namaController, 'Pekerjaan Ibu'),
+              _buildInput(pekerjaanibu, 'Pekerjaan Ibu'),
               const SizedBox(height: 16),
-                 _buildInput(namaController, 'no telp ortu'),
+              _buildInput(notelpon, 'No Telpon(),'),
               const SizedBox(height: 16),
-                 const SizedBox(height: 35),
+              _buildInput(alamatortu, 'Alamat()'),
+              const SizedBox(height: 35),
               _buildButtonKirim(),
              
             ],

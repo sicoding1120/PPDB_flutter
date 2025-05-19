@@ -4,7 +4,9 @@ import 'package:ppdb_project/pages/Home_Screen.dart';
 import 'package:ppdb_project/pages/Login_Screen.dart';
 import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
+import 'package:ppdb_project/pages/hasiltest.dart';
 import 'package:ppdb_project/pages/isidata_ortu.dart';
+import 'package:ppdb_project/pages/jadwaltest.dart';
 import 'package:ppdb_project/pages/ktm.dart';
 import 'package:ppdb_project/pages/pendaftaran.dart';
 import 'package:ppdb_project/pages/profile.dart';
@@ -63,4 +65,15 @@ final router = [
     name: myRouter.KTM,
     builder: (context, state) => KTM(),
   ),  
+
+  GoRoute(path: "/jadwal",
+    name: myRouter.jadwal,
+    builder: (context, state) => Jadwaltest(),
+  ),
+ 
+
+  GoRoute(path: "/hasil",
+    name: myRouter.hasil,
+    builder: (context, state) => Hasiltest(),
+  ),
 ];
