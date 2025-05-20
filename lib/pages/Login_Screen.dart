@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -87,7 +88,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 50),
                 ElevatedButton(
-                  onPressed: () => AuthService().loginWithEmailPassword(context,_emailController.text, _passwordController.text ), // Panggil fungsi _login
+                  onPressed: () => AuthService().loginWithEmailPassword(
+                    context,
+                    _emailController.text,
+                    _phoneController.text,     // phone
+                    _passwordController.text,  // password
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
                     minimumSize: Size(double.infinity, 50),

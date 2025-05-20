@@ -20,11 +20,15 @@ class MyApp extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         final GoRouter customRouter = GoRouter(
-          initialLocation: '/login',
+          initialLocation: '/splash',
           routes: router,
           redirect: (context, state) {
             final user = FirebaseAuth.instance.currentUser;
-            final loggingIn = state.uri.toString() == '/login' || state.uri.toString() == '/regis' || state.uri.toString() == '/forget';
+            final loggingIn =
+                state.uri.toString() == '/login' ||
+                state.uri.toString() == '/regis' ||
+                state.uri.toString() == '/forget';
+            if (state.uri.toString() == '/splash') return null;
             if (user == null && !loggingIn) return '/login';
             if (user != null && loggingIn) return '/home';
             return null;

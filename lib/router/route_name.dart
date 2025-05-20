@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 part of 'app_router.dart';
 
 class myRouter {
@@ -12,4 +14,7 @@ class myRouter {
    static const String profile = "/profile";
    static const String KTM = "/KTM";
    static const String test = "/test";
+   static const String jadwal = "/jadwal";
+   static const String hasil = "/hasil";
+  static const String ujian = "/ujian";
 }

@@ -19,7 +19,7 @@ part 'route_name.dart';
 
 final router = [
     GoRoute(
-      path: "/",
+      path: "/splash",
       name: myRouter.Splash,
       builder: (context, state) => SplashScreen(),
     ),

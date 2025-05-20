@@ -8,12 +8,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ppdb_project/model/userModel.dart';
 import 'package:ppdb_project/router/app_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   // Fungsi untuk register (buat akun baru)
   Future<User?> registerWithEmailPassword(
@@ -52,9 +53,9 @@ class AuthService {
         return userCredential.user;
       } else {
         // Backend gagal, rollback Firebase
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registrasi gagal di server.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Registrasi gagal di server.')));
         return null;
       }
     } on FirebaseAuthException catch (e) {
@@ -64,9 +65,9 @@ class AuthService {
       print('Firebase error: ${e.code} - ${e.message}');
       return null;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrasi gagal: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Registrasi gagal: $e')));
       print('Other error: $e');
       return null;
     }
@@ -76,11 +77,11 @@ class AuthService {
   Future<User?> loginWithEmailPassword(
     BuildContext context,
     String email,
-    // String phone,
+    String phone,
     String password,
   ) async {
-    // Regex sederhana untuk validasi email
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    Uri urllogin = Uri.parse('http://localhost:5000/auth/login');
 
     // Validasi format email
     if (!emailRegex.hasMatch(email.trim())) {
@@ -99,7 +100,44 @@ class AuthService {
     }
 
     try {
-      // Login dengan Firebase
+      // 1. Login ke backend dulu
+      var response = await http.post(
+        urllogin,
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'phone': phone,
+        }),
+      );
+      print('Backend response: ${response.statusCode} - ${response.body}');
+
+      var responseData = jsonDecode(response.body);
+      print(responseData["data"]);
+
+      if (response.statusCode == 201 ) {
+        DataUser loginData = DataUser.fromJson({
+          'ID': responseData['data']['ID'],
+          'username': responseData['data']['username'],
+          'email': responseData['data']['email'],
+          'password': responseData['data']['password'],
+          'phone': responseData['data']['phone'],
+        });
+        print("Login data: ${loginData.toJson()}");
+        // Simpan data login ke SharedPreferences
+        //Shared
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('Login', jsonEncode(loginData.toJson()));
+        print("Shared: ${prefs.getString('Login')}");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login berhasil')),
+          // SnackBar(content: Text('Login berhasil di server: ${response.body}')),
+        );
+        context.goNamed(myRouter.Home);
+      }
+
+      // 2. Jika backend sukses, login ke Firebase
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.trim(), password: password);
 
@@ -114,16 +152,13 @@ class AuthService {
       } else if (e.code == 'invalid-email') {
         errorMsg = 'Email tidak valid.';
       }
-
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(errorMsg)));
-      return null;
     } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Login gagal: ${e.toString()}')));
-      return null;
     }
   }
 
