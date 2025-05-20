@@ -1,14 +1,15 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/service/authService.dart';
 
 class ProfilePage extends StatelessWidget {
-  final String username = 'Ibrahim';
-  final String email = 'Ibrahim@gmail.com';
-  final String password = '1234567890';
-
+  final String username =
+      FirebaseAuth.instance.currentUser?.displayName ?? 'calon siswa';
+  final String email = FirebaseAuth.instance.currentUser?.email ?? 'Email siswa';
+  final String password = '********'; // Password tidak ditampilkan
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,12 +22,9 @@ class ProfilePage extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
             context.go('/home');
-          }
+          },
         ),
-        title: Text(
-          'Profile',
-          style: TextStyle(color: Colors.black),
-        ),
+        title: Text('Profile', style: TextStyle(color: Colors.black)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -50,12 +48,10 @@ class ProfilePage extends StatelessWidget {
               alignment: Alignment.center,
               child: IconButton(
                 icon: Icon(Icons.logout, color: Colors.redAccent, size: 32),
-               onPressed: () async {
-  await AuthService().logout();
-  print("Logout pressed");
-  context.go('/login'); // GUNAKAN go_router, bukan Navigator
-},
-                
+                onPressed: () async {
+                  await AuthService().logout();
+                  print("Logout pressed");
+                },
               ),
             ),
             SizedBox(height: 20),

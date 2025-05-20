@@ -1,6 +1,10 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ppdb_project/model/userModel.dart';
+import 'package:ppdb_project/router/app_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,6 +18,7 @@ String? imageUrl;
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 1; // 0: Daftar, 1: Home, 2: Notif/Profile
   int? hoveredIndex;
+  DataUser? userData;
 
   void _onNavTap(int index) {
     setState(() {
@@ -24,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (index == 1) {
       // Sudah di Home
     } else if (index == 2) {
-      context.go("/profile");
+      context.go("/profile"); // Pastikan route /profile sudah ada
     } else if (index == 3) {
       context.go("/cs"); // Pastikan route /cs sudah ada
     }
@@ -33,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final userName =
-        FirebaseAuth.instance.currentUser?.displayName ?? 'calon siswa';
+        FirebaseAuth.instance.currentUser?.displayName ?? userData?.username ?? 'calon siswa';
 
     return Scaffold(
       backgroundColor: Color(0xFFF3F3F3),
@@ -141,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: _buildCard(
-                    image: 'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
+                    image:
+                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
                     title: 'Pendaftaran Peserta Didik Baru',
                     buttonText: 'Mulai',
                     onTap: () {
@@ -152,7 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(width: 12),
                 Expanded(
                   child: _buildCard(
-                    image: 'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_2.png',
+                    image:
+                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_2.png',
                     title: 'Jadwal Test Peserta Didik Baru',
                     buttonText: 'Lihat',
                     onTap: () {
@@ -163,7 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(width: 12),
                 Expanded(
                   child: _buildCard(
-                    image: 'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_3.png',
+                    image:
+                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_3.png',
                     title: 'Hasil Seleksi',
                     buttonText: 'Cek',
                     onTap: () {
@@ -205,16 +213,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: (currentIndex == 0 || hoveredIndex == 0)
-                          ? Colors.white
-                          : Colors.transparent,
+                      color:
+                          (currentIndex == 0 || hoveredIndex == 0)
+                              ? Colors.white
+                              : Colors.transparent,
                     ),
                     padding: EdgeInsets.all(8),
                     child: Icon(
                       Icons.sd_card_sharp,
-                      color: (currentIndex == 0 || hoveredIndex == 0)
-                          ? Color(0xFF24D674)
-                          : Colors.white,
+                      color:
+                          (currentIndex == 0 || hoveredIndex == 0)
+                              ? Color(0xFF24D674)
+                              : Colors.white,
                     ),
                   ),
                 ),
@@ -226,18 +236,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: GestureDetector(
                   onTap: () => _onNavTap(1),
                   child: Container(
-                    decoration: hoveredIndex == 1
-                        ? BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          )
-                        : null,
+                    decoration:
+                        hoveredIndex == 1
+                            ? BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            )
+                            : null,
                     padding: EdgeInsets.all(8),
                     child: Icon(
                       Icons.home,
-                      color: hoveredIndex == 1
-                          ? Color(0xFF24D674) // Hijau saat hover
-                          : Colors.white,      // Putih saat tidak hover
+                      color:
+                          hoveredIndex == 1
+                              ? Color(0xFF24D674) // Hijau saat hover
+                              : Colors.white, // Putih saat tidak hover
                     ),
                   ),
                 ),
@@ -251,16 +263,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: (currentIndex == 2 || hoveredIndex == 2)
-                          ? Colors.white
-                          : Colors.transparent,
+                      color:
+                          (currentIndex == 2 || hoveredIndex == 2)
+                              ? Colors.white
+                              : Colors.transparent,
                     ),
                     padding: EdgeInsets.all(8),
                     child: Icon(
                       Icons.person,
-                      color: (currentIndex == 2 || hoveredIndex == 2)
-                          ? Color(0xFF24D674)
-                          : Colors.white,
+                      color:
+                          (currentIndex == 2 || hoveredIndex == 2)
+                              ? Color(0xFF24D674)
+                              : Colors.white,
                     ),
                   ),
                 ),
@@ -274,16 +288,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: (currentIndex == 3 || hoveredIndex == 3)
-                          ? Colors.white
-                          : Colors.transparent,
+                      color:
+                          (currentIndex == 3 || hoveredIndex == 3)
+                              ? Colors.white
+                              : Colors.transparent,
                     ),
                     padding: EdgeInsets.all(8),
                     child: Icon(
                       Icons.support_agent,
-                      color: (currentIndex == 3 || hoveredIndex == 3)
-                          ? Color(0xFF24D674)
-                          : Colors.white,
+                      color:
+                          (currentIndex == 3 || hoveredIndex == 3)
+                              ? Color(0xFF24D674)
+                              : Colors.white,
                     ),
                   ),
                 ),
@@ -312,21 +328,30 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: image.isNotEmpty && image.startsWith('https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png') || image.startsWith('https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png')
-                ? Image.network(
-                    image,
-                    height: 100,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                : Image.asset(
-                    image.isNotEmpty ? image : '', // fallback asset jika kosong
-                    height: 100,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+            child:
+                image.isNotEmpty &&
+                            image.startsWith(
+                              'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
+                            ) ||
+                        image.startsWith(
+                          'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
+                        )
+                    ? Image.network(
+                      image,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                    : Image.asset(
+                      image.isNotEmpty
+                          ? image
+                          : '', // fallback asset jika kosong
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
           ),
-          
+
           SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),

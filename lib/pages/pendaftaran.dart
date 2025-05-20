@@ -29,7 +29,7 @@ class _PendaftaranState extends State<Pendaftaran> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF24D674)),
           onPressed: () {
             context.go("/home");
           },

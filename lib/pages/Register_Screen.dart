@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -57,6 +58,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 SizedBox(height: 24),
+                TextField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    hintText: 'Your Number',
+                    prefixIcon: Icon(Icons.phone_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -104,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () => AuthService().registerWithEmailPassword(context, _emailController.text, _passwordController.text, _nameController.text), // Panggil metode register saat tombol ditekan
+                  onPressed: () => AuthService().registerWithEmailPassword(context, _emailController.text, _passwordController.text, _nameController.text, _phoneController.text), // Panggil metode register saat tombol ditekan
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
                     minimumSize: Size(double.infinity, 50),
