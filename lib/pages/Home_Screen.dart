@@ -21,360 +21,234 @@ class _HomeScreenState extends State<HomeScreen> {
   DataUser? userData;
 
   void _onNavTap(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-    if (index == 0) {
-      context.go("/pendaftaran");
-    } else if (index == 1) {
-      // Sudah di Home
-    } else if (index == 2) {
-      context.go("/profile"); // Pastikan route /profile sudah ada
-    } else if (index == 3) {
-      context.go("/cs"); // Pastikan route /cs sudah ada
+    setState(() => currentIndex = index);
+    switch (index) {
+      case 0:
+        context.go("/KTM");
+        break;
+      case 1:
+        break;
+      case 2:
+        context.go("/profile");
+        break;
+      case 3:
+        context.go("/");
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final userName =
-        FirebaseAuth.instance.currentUser?.displayName ?? userData?.username ?? 'calon siswa';
+    final userName = FirebaseAuth.instance.currentUser?.displayName ?? 'calon siswa';
 
     return Scaffold(
-      backgroundColor: Color(0xFFF3F3F3),
-      body: Column(
+      backgroundColor: const Color(0xFFF3F3F3),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildHeader(userName),
+            const SizedBox(height: 20),
+            _buildLogo(),
+            const SizedBox(height: 30),
+            _buildMenuGrid(),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  Widget _buildHeader(String userName) {
+    return Container(
+      height: 220,
+      decoration: const BoxDecoration(
+        color: Color(0xFF24D674),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
+      ),
+      child: Stack(
         children: [
-          // Header hijau
-          Container(
-            height: 220,
-            decoration: BoxDecoration(
-              color: Color(0xFF24D674),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-            ),
-            child: Stack(
+          Positioned(
+            top: 60,
+            left: 24,
+            child: Row(
               children: [
-                Positioned(
-                  top: 60,
-                  left: 24,
-                  child: Row(
+                GestureDetector(
+                  onTap: () => context.go("/profile"),
+                  child: const CircleAvatar(
+                    radius: 24,
+                    backgroundImage: AssetImage("assets/profile.jpg"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     children: [
-                      CircleAvatar(
-                        radius: 24,
-                      ),
-                      SizedBox(width: 12),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          children: [
-                            TextSpan(text: "Hai "),
-                            WidgetSpan(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 4.0),
-                                child: Text(
-                                  "👋",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            ),
-                            TextSpan(text: userName),
-                          ],
+                      const TextSpan(text: "Hai "),
+                      WidgetSpan(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4.0),
+                          child: Text("👋", style: TextStyle(fontSize: 18)),
                         ),
                       ),
+                      TextSpan(text: userName),
                     ],
                   ),
                 ),
-                Positioned(
-                  top: 60,
-                  right: 24,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.notifications, color: Color(0xFF24D674)),
-                      onPressed: () {
-                        context.go("/profile");
-                      },
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
-
-          SizedBox(height: 20),
-
-          // Logo MYPPDB
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'MY',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
-                ),
-                TextSpan(
-                  text: 'PPDB',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF24D674),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 24),
-
-          // Card menu
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildCard(
-                    image:
-                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
-                    title: 'Pendaftaran Peserta Didik Baru',
-                    buttonText: 'Mulai',
-                    onTap: () {
-                      context.go("/pendaftaran");
-                    },
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: _buildCard(
-                    image:
-                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_2.png',
-                    title: 'Jadwal Test Peserta Didik Baru',
-                    buttonText: 'Lihat',
-                    onTap: () {
-                      context.go("/jadwal");
-                    },
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: _buildCard(
-                    image:
-                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/your_image_3.png',
-                    title: 'Hasil Seleksi',
-                    buttonText: 'Cek',
-                    onTap: () {
-                      context.go("/hasil");
-                    },
-                  ),
-                ),
-              ],
+          Positioned(
+            top: 60,
+            right: 24,
+            child: Container(
+              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              child: IconButton(
+                icon: const Icon(Icons.notifications, color: Color(0xFF24D674)),
+                onPressed: () {},
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
 
-      // Bottom Navigation
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            color: Color(0xFFFFA726),
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
+  Widget _buildLogo() {
+    return RichText(
+      text: const TextSpan(
+        children: [
+          TextSpan(
+            text: 'MY',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          TextSpan(
+            text: 'PPDB',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF24D674)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Center(
+            child: Text(
+              'Daftar Kegiatan',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 108, 108, 108)),
+            ),
+          ),
+          const SizedBox(height: 25),
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 1,
             children: [
-              // Daftar
-              MouseRegion(
-                onEnter: (_) => setState(() => hoveredIndex = 0),
-                onExit: (_) => setState(() => hoveredIndex = null),
-                child: GestureDetector(
-                  onTap: () => _onNavTap(0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color:
-                          (currentIndex == 0 || hoveredIndex == 0)
-                              ? Colors.white
-                              : Colors.transparent,
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.sd_card_sharp,
-                      color:
-                          (currentIndex == 0 || hoveredIndex == 0)
-                              ? Color(0xFF24D674)
-                              : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              // Home
-              MouseRegion(
-                onEnter: (_) => setState(() => hoveredIndex = 1),
-                onExit: (_) => setState(() => hoveredIndex = null),
-                child: GestureDetector(
-                  onTap: () => _onNavTap(1),
-                  child: Container(
-                    decoration:
-                        hoveredIndex == 1
-                            ? BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            )
-                            : null,
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.home,
-                      color:
-                          hoveredIndex == 1
-                              ? Color(0xFF24D674) // Hijau saat hover
-                              : Colors.white, // Putih saat tidak hover
-                    ),
-                  ),
-                ),
-              ),
-              // Notif/Profile
-              MouseRegion(
-                onEnter: (_) => setState(() => hoveredIndex = 2),
-                onExit: (_) => setState(() => hoveredIndex = null),
-                child: GestureDetector(
-                  onTap: () => _onNavTap(2),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color:
-                          (currentIndex == 2 || hoveredIndex == 2)
-                              ? Colors.white
-                              : Colors.transparent,
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.person,
-                      color:
-                          (currentIndex == 2 || hoveredIndex == 2)
-                              ? Color(0xFF24D674)
-                              : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              // Customer Service
-              MouseRegion(
-                onEnter: (_) => setState(() => hoveredIndex = 3),
-                onExit: (_) => setState(() => hoveredIndex = null),
-                child: GestureDetector(
-                  onTap: () => _onNavTap(3),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color:
-                          (currentIndex == 3 || hoveredIndex == 3)
-                              ? Colors.white
-                              : Colors.transparent,
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.support_agent,
-                      color:
-                          (currentIndex == 3 || hoveredIndex == 3)
-                              ? Color(0xFF24D674)
-                              : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              _iconMenu("Pendaftaran", Icons.how_to_reg, () => context.go("/pendaftaran"),Colors.orange ),
+              _iconMenu("Jadwal Test", Icons.event, () => context.go("/jadwal"), Colors.green),
+              _iconMenu("Hasil Test", Icons.fact_check, () => context.go("/hasil", ), Colors.lightBlueAccent),
+              _iconMenu("Pembayaran", Icons.payment, () => context.go("/pembayaran"), Colors.redAccent),
+              _iconMenu("Test PPDB", Icons.task_alt, () => context.go("/ujian"), Colors.indigo),
+              _iconMenu("Upload Dok.", Icons.upload_file, () => context.go("/uploaddoc"), Colors.lime),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _iconMenu(String label, IconData icon, VoidCallback onTap, Color iconColor) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F3F3),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Icon(icon, size: 28, color: iconColor),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNav() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFA726),
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: const [
+            BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _navBarItem(0, Icons.calendar_view_day, "Kartu tanda siswa"),
+            _navBarItem(1, Icons.home, "Home"),
+            _navBarItem(3, Icons.support_agent, "Bantuan"),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildCard({
-    required String image,
-    required String title,
-    required String buttonText,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-      ),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child:
-                image.isNotEmpty &&
-                            image.startsWith(
-                              'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
-                            ) ||
-                        image.startsWith(
-                          'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543378/gj4ltfo9iqlrgr3robgu.png',
-                        )
-                    ? Image.network(
-                      image,
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                    : Image.asset(
-                      image.isNotEmpty
-                          ? image
-                          : '', // fallback asset jika kosong
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-          ),
-
-          SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF24D674),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+  Widget _navBarItem(int index, IconData icon, String label) {
+    final isActive = currentIndex == index || hoveredIndex == index;
+    return Expanded(
+      child: MouseRegion(
+        onEnter: (_) => setState(() => hoveredIndex = index),
+        onExit: (_) => setState(() => hoveredIndex = null),
+        child: GestureDetector(
+          onTap: () => _onNavTap(index),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive ? Colors.white : Colors.transparent,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  icon,
+                  color: isActive ? const Color(0xFF24D674) : Colors.white,
                 ),
               ),
-              onPressed: onTap,
-              child: Text(buttonText),
-            ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? Colors.white : Colors.white70,
+                  fontSize: 11,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

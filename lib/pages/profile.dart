@@ -46,14 +46,32 @@ class ProfilePage extends StatelessWidget {
             // Icon Logout
             Align(
               alignment: Alignment.center,
-              child: IconButton(
-                icon: Icon(Icons.logout, color: Colors.redAccent, size: 32),
-                onPressed: () async {
-                  await AuthService().logout();
-                  print("Logout pressed");
-                },
+child: IconButton(
+  icon: Icon(Icons.logout, color: Colors.red),
+
+  onPressed: () async {
+    final confirm = await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Keluar?"),
+        content: Text("Apakah Anda yakin ingin logout?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Batal")),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Ya")),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await FirebaseAuth.instance.signOut();
+      context.go("/login");
+    }
+  },
+)
+
+                
               ),
-            ),
+            
             SizedBox(height: 20),
           ],
         ),
