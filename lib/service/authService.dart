@@ -76,7 +76,7 @@ class AuthService {
   Future<User?> loginWithEmailPassword(
     BuildContext context,
     String email,
-    String phone,
+    // String phone,
     String password,
   ) async {
     // Regex sederhana untuk validasi email
