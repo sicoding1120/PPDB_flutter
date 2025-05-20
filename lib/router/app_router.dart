@@ -8,8 +8,10 @@ import 'package:ppdb_project/pages/hasiltest.dart';
 import 'package:ppdb_project/pages/isidata_ortu.dart';
 import 'package:ppdb_project/pages/jadwaltest.dart';
 import 'package:ppdb_project/pages/ktm.dart';
+import 'package:ppdb_project/pages/payment.dart';
 import 'package:ppdb_project/pages/pendaftaran.dart';
 import 'package:ppdb_project/pages/profile.dart';
+import 'package:ppdb_project/pages/ujian.dart';
 import 'package:ppdb_project/pages/uploadDoc.dart';
 part 'route_name.dart';
 
@@ -70,10 +72,20 @@ final router = [
     name: myRouter.jadwal,
     builder: (context, state) => Jadwaltest(),
   ),
+
+   GoRoute(path: "/ujian",
+    name: myRouter.ujian,
+    builder: (context, state) => Ujian(),
+  ),
  
 
   GoRoute(path: "/hasil",
     name: myRouter.hasil,
     builder: (context, state) => Hasiltest(),
+  ),
+
+  GoRoute(path: "/payment",
+    name: myRouter.payment,
+    builder: (context, state) => Payment(),
   ),
 ];

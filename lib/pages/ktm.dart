@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class KTM extends StatefulWidget {
-  const KTM({super.key});
-
-  @override
-  State<KTM> createState() => _KTMState();
-}
-
-class _KTMState extends State<KTM> {
-  // Contoh data siswa, bisa diganti dengan data dari backend/database
+class KTM extends StatelessWidget {
   final String nama = 'Ibrahim';
-  final String nisn = '1234567890';
-  final String kelas = 'XII IPA 1';
-  final String alamat = 'Jl. Pendidikan No. 123, Bandung';
-  final String sekolah = 'SMK MADINATUL QURAN';
+  final String nim = '1234567890';
+  final String prodi = 'RPL';
+  final String namabapak = 'agus';
+  final String namaibu = 'mawar';
+  final String pekerjaanayah = 'dosen';
+  final String pekerjaanibu = 'ibu rumah tangga';
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,102 +23,57 @@ class _KTMState extends State<KTM> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
-            Navigator.pop(context);
+            context.go('/home');
           },
         ),
         title: Text(
-          'Kartu Tanda Siswa',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          'Kartu Tanda Mahasiswa',
+          style: TextStyle(color: Colors.black),
         ),
       ),
-      body: Center(
-        child: Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            width: 340,
-            padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-              border: Border.all(color: Colors.blue.shade100, width: 2),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.grey[300],
+              child: Icon(Icons.person, size: 60, color: Colors.black),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Logo sekolah
-                Image.asset(
-                  'assets/logo_sekolah.png',
-                  height: 60,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => Icon(Icons.school, size: 60, color: Colors.blue),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  sekolah,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.blue[900],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Divider(height: 28, thickness: 1.2),
-                // Foto siswa
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.grey[300],
-                  child: Icon(Icons.person, size: 50, color: Colors.black),
-                ),
-                SizedBox(height: 18),
-                _infoRow('Nama', nama),
-                _infoRow('NISN', nisn),
-                _infoRow('Kelas', kelas),
-                _infoRow('Alamat', alamat),
-                SizedBox(height: 18),
-                Divider(thickness: 1),
-                SizedBox(height: 8),
-                Text(
-                  'Kartu ini adalah identitas resmi siswa\nHarap dijaga dan dibawa saat di sekolah',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
+            SizedBox(height: 30),
+            _infoBox('Nama :', nama),
+            SizedBox(height: 12),
+            _infoBox('NIM :', nim),
+            SizedBox(height: 12),
+            _infoBox('Program Studi :', prodi),
+           SizedBox(height: 12),
+            _infoBox('Nama Ayah :', namabapak),
+             SizedBox(height: 12),
+            _infoBox('Nama Ibu :', namaibu),
+             SizedBox(height: 12),
+            _infoBox('Pekerjaan Ayah :', pekerjaanayah),
+             SizedBox(height: 12),
+            _infoBox('Pekerjaan Ibu :', pekerjaanibu),
+            SizedBox(height: 20),
+          ],
         ),
       ),
     );
   }
 
-  Widget _infoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 70,
-            child: Text(
-              '$label',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-            ),
-          ),
-          Text(
-            ': ',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+  Widget _infoBox(String label, String value) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Text(
+        '$label $value',
+        style: TextStyle(fontSize: 14, color: Colors.black),
       ),
     );
   }
