@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: 'Pendaftaran Peserta Didik Baru',
                     buttonText: 'Mulai',
                     onTap: () {
-                      context.go("/pendaftaran");
+                      context.goNamed(myRouter.isidataOrtu);
                     },
                   ),
                 ),
