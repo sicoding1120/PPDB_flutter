@@ -2,27 +2,46 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/service/pendaftaranService.dart';
 
 class IsidataOrtu extends StatefulWidget {
   const IsidataOrtu({super.key});
 
   @override
-  State<IsidataOrtu> createState() => _PendaftaranState();
+  State<IsidataOrtu> createState() => _IsidataOrtuState();
 }
 
-class _PendaftaranState extends State<IsidataOrtu> {
+class _IsidataOrtuState extends State<IsidataOrtu> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController namaayahController = TextEditingController();
-  final TextEditingController namaibuController = TextEditingController();
-  final TextEditingController pekerjaanayah= TextEditingController();
-  final TextEditingController pekerjaanibu = TextEditingController();
-  final TextEditingController notelpon = TextEditingController();
-  final TextEditingController alamatortu = TextEditingController();
-  final TextEditingController dokumenController = TextEditingController();
+  // Ayah
+  final TextEditingController namaAyahController = TextEditingController();
+  final TextEditingController pekerjaanAyahController = TextEditingController();
+  final TextEditingController noTelpAyahController = TextEditingController();
+  final TextEditingController alamatAyahController = TextEditingController();
+  final TextEditingController agamaAyahController = TextEditingController();
+  final TextEditingController tempatLahirAyahController = TextEditingController();
+  final TextEditingController tanggalLahirAyahController = TextEditingController();
+  final TextEditingController statusAyahController = TextEditingController();
+  final TextEditingController pendidikanAyahController = TextEditingController();
+  final TextEditingController gelarAyahController = TextEditingController();
+  final TextEditingController kewarganegaraanAyahController = TextEditingController();
 
-  String? jenisKelamin;
-  String? jenisTest;
+  // Ibu
+  final TextEditingController namaIbuController = TextEditingController();
+  final TextEditingController pekerjaanIbuController = TextEditingController();
+  final TextEditingController noTelpIbuController = TextEditingController();
+  final TextEditingController alamatIbuController = TextEditingController();
+  final TextEditingController agamaIbuController = TextEditingController();
+  final TextEditingController tempatLahirIbuController = TextEditingController();
+  final TextEditingController tanggalLahirIbuController = TextEditingController();
+  final TextEditingController statusIbuController = TextEditingController();
+  final TextEditingController pendidikanIbuController = TextEditingController();
+  final TextEditingController gelarIbuController = TextEditingController();
+  final TextEditingController kewarganegaraanIbuController = TextEditingController();
+
+  bool isAyah = true; // true = form ayah, false = form ibu
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +50,14 @@ class _PendaftaranState extends State<IsidataOrtu> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF24D674)),
           onPressed: () {
             context.go("/home");
           },
         ),
-        title: const Text(
-          'isi data orang tua',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+        title: Text(
+          isAyah ? 'Data Ayah' : 'Data Ibu',
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
       ),
@@ -51,22 +67,7 @@ class _PendaftaranState extends State<IsidataOrtu> {
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildInput(namaayahController, 'Nama Ayah'),
-              const SizedBox(height: 16),
-              _buildInput(namaibuController, 'Tempat Lahir'),
-              const SizedBox(height: 16),
-              _buildInput(pekerjaanayah, 'Pekerjaan Ayah'),
-              const SizedBox(height: 16),
-              _buildInput(pekerjaanibu, 'Pekerjaan Ibu'),
-              const SizedBox(height: 16),
-              _buildInput(notelpon, 'No Telpon(),'),
-              const SizedBox(height: 16),
-              _buildInput(alamatortu, 'Alamat()'),
-              const SizedBox(height: 35),
-              _buildButtonKirim(),
-             
-            ],
+            children: isAyah ? _buildAyahForm() : _buildIbuForm(),
           ),
         ),
       ),
@@ -94,86 +95,218 @@ class _PendaftaranState extends State<IsidataOrtu> {
     return TextFormField(
       controller: controller,
       decoration: _inputDecoration(hint),
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib diisi' : null,
+      validator: (value) => value == null || value.isEmpty ? 'Wajib diisi' : null,
     );
   }
 
-  Widget _buildDropdownJenisKelamin() {
-    return DropdownButtonFormField<String>(
-      value: jenisKelamin,
-      decoration: _inputDecoration('Jenis Kelamin'),
-      items: const [
-        DropdownMenuItem(value: 'Laki-laki', child: Text('Laki-laki')),
-        DropdownMenuItem(value: 'Perempuan', child: Text('Perempuan')),
-      ],
-      onChanged: (value) {
-        setState(() {
-          jenisKelamin = value;
-        });
-      },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
-    );
-  }
-
-  Widget _buildDropdownJenisTest() {
-    return DropdownButtonFormField<String>(
-      value: jenisTest,
-      decoration: _inputDecoration('Test OFFLINE / ONLINE'),
-      items: const [
-        DropdownMenuItem(value: 'Offline', child: Text('Offline')),
-        DropdownMenuItem(value: 'Online', child: Text('Online')),
-      ],
-      onChanged: (value) {
-        setState(() {
-          jenisTest = value;
-        });
-      },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
-    );
-  }
-
-  Widget _buildUploadField() {
+  Widget _buildDateInput(TextEditingController controller, String hint) {
     return TextFormField(
-      controller: dokumenController,
+      controller: controller,
       readOnly: true,
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fitur upload belum tersedia')),
+      decoration: _inputDecoration(hint),
+      validator: (value) => value == null || value.isEmpty ? 'Wajib diisi' : null,
+      onTap: () async {
+        DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1950),
+          lastDate: DateTime.now(),
         );
+        if (picked != null) {
+          setState(() {
+            controller.text = "${picked.toLocal()}".split(' ')[0];
+          });
+        }
       },
-      decoration: _inputDecoration('Upload Dokumen').copyWith(
-        suffixIcon: const Icon(Icons.upload_file),
-      ),
     );
   }
 
-  Widget _buildButtonKirim() {
+  // Dropdown untuk enum Religion
+  Widget _buildDropdownReligion(TextEditingController controller, String label) {
+    return DropdownButtonFormField<String>(
+      value: controller.text.isNotEmpty ? controller.text : null,
+      decoration: _inputDecoration(label),
+      items: const [
+        DropdownMenuItem(value: 'ISLAM', child: Text('Islam')),
+        DropdownMenuItem(value: 'CHRISTIAN', child: Text('Kristen')),
+        DropdownMenuItem(value: 'HINDU', child: Text('Hindu')),
+        DropdownMenuItem(value: 'BUDDHIST', child: Text('Buddha')),
+        DropdownMenuItem(value: 'CONFUCIAN', child: Text('Konghucu')),
+      ],
+      onChanged: (value) {
+        setState(() {
+          controller.text = value ?? '';
+        });
+      },
+      validator: (value) => value == null || value.isEmpty ? 'Wajib dipilih' : null,
+    );
+  }
+
+  // Dropdown untuk enum ParentStatus
+  Widget _buildDropdownStatus(TextEditingController controller, String label) {
+    return DropdownButtonFormField<String>(
+      value: controller.text.isNotEmpty ? controller.text : null,
+      decoration: _inputDecoration(label),
+      items: const [
+        DropdownMenuItem(value: 'ALIVE', child: Text('Masih Hidup')),
+        DropdownMenuItem(value: 'DEAD', child: Text('Meninggal')),
+      ],
+      onChanged: (value) {
+        setState(() {
+          controller.text = value ?? '';
+        });
+      },
+      validator: (value) => value == null || value.isEmpty ? 'Wajib dipilih' : null,
+    );
+  }
+
+  List<Widget> _buildAyahForm() {
+    return [
+      _buildInput(namaAyahController, 'Nama Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(pekerjaanAyahController, 'Pekerjaan Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(noTelpAyahController, 'No Telp Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(alamatAyahController, 'Alamat Ayah'),
+      const SizedBox(height: 16),
+      _buildDropdownReligion(agamaAyahController, 'Agama Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(tempatLahirAyahController, 'Tempat Lahir Ayah'),
+      const SizedBox(height: 16),
+      _buildDateInput(tanggalLahirAyahController, 'Tanggal Lahir Ayah'),
+      const SizedBox(height: 16),
+      _buildDropdownStatus(statusAyahController, 'Status Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(pendidikanAyahController, 'Pendidikan Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(gelarAyahController, 'Gelar Ayah'),
+      const SizedBox(height: 16),
+      _buildInput(kewarganegaraanAyahController, 'Kewarganegaraan Ayah'),
+      const SizedBox(height: 35),
+      _buildButtonAyah(),
+    ];
+  }
+
+  List<Widget> _buildIbuForm() {
+    return [
+      _buildInput(namaIbuController, 'Nama Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(pekerjaanIbuController, 'Pekerjaan Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(noTelpIbuController, 'No Telp Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(alamatIbuController, 'Alamat Ibu'),
+      const SizedBox(height: 16),
+      _buildDropdownReligion(agamaIbuController, 'Agama Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(tempatLahirIbuController, 'Tempat Lahir Ibu'),
+      const SizedBox(height: 16),
+      _buildDateInput(tanggalLahirIbuController, 'Tanggal Lahir Ibu'),
+      const SizedBox(height: 16),
+      _buildDropdownStatus(statusIbuController, 'Status Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(pendidikanIbuController, 'Pendidikan Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(gelarIbuController, 'Gelar Ibu'),
+      const SizedBox(height: 16),
+      _buildInput(kewarganegaraanIbuController, 'Kewarganegaraan Ibu'),
+      const SizedBox(height: 35),
+      _buildButtonIbu(),
+    ];
+  }
+
+  Widget _buildButtonAyah() {
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
-        onPressed: () {
-          context.go("/uploaddoc");
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Data berhasil dikirim')),
-            );
+            final dataAyah = {
+              "name": namaAyahController.text,
+              "job": pekerjaanAyahController.text,
+              "phone": noTelpAyahController.text,
+              "address": alamatAyahController.text,
+              "religion": agamaAyahController.text,
+              "placeOfBirth": tempatLahirAyahController.text,
+              "dateOfBirth": tanggalLahirAyahController.text,
+              "status": statusAyahController.text,
+              "education": pendidikanAyahController.text,
+              "title": gelarAyahController.text,
+              "citizenship": kewarganegaraanAyahController.text,
+            };
+            final ayahSuccess = await SiswaService().createFather(dataAyah);
+            if (ayahSuccess) {
+              setState(() {
+                isAyah = false; // Ganti ke form ibu
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Gagal mengirim data ayah')),
+              );
+            }
           }
         },
         style: ElevatedButton.styleFrom(
-          
-          backgroundColor: const Color(0xFF00D084), // hijau
-          foregroundColor: Colors.white, // teks putih
+          backgroundColor: const Color(0xFF00D084),
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
         ),
         child: const Text(
+          'Selanjutnya (Isi Data Ibu)',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
 
-          'Selanjutnya',
+  Widget _buildButtonIbu() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            final dataIbu = {
+              "name": namaIbuController.text,
+              "job": pekerjaanIbuController.text,
+              "phone": noTelpIbuController.text,
+              "address": alamatIbuController.text,
+              "religion": agamaIbuController.text,
+              "placeOfBirth": tempatLahirIbuController.text,
+              "dateOfBirth": tanggalLahirIbuController.text,
+              "status": statusIbuController.text,
+              "education": pendidikanIbuController.text,
+              "title": gelarIbuController.text,
+              "citizenship": kewarganegaraanIbuController.text,
+              
+            };
+            final ibuSuccess = await SiswaService().createMother(dataIbu);
+            if (ibuSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Data berhasil dikirim')),
+              );
+              context.go("/uploaddoc");
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Gagal mengirim data ibu')),
+              );
+            }
+          }
+          context.goNamed(myRouter.Pendaftaran);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF00D084),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        child: const Text(
+          'Selesai',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),

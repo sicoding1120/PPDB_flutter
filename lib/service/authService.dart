@@ -110,7 +110,7 @@ class AuthService {
           'phone': phone,
         }),
       );
-      print('Backend response: ${response.statusCode} - ${response.body}');
+      // print('Backend response: ${response.statusCode} - ${response.body}');
 
       var responseData = jsonDecode(response.body);
       print(responseData["data"]);
