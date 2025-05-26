@@ -1,5 +1,7 @@
 // ignore_for_file: unused_element
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
@@ -38,6 +40,13 @@ class _PendaftaranState extends State<Pendaftaran> {
   String? religion;
   String? orphanStatus;
   String? bloodType;
+  Uint8List? akteBytes,
+      kkBytes,
+      ktpAyahBytes,
+      ktpIbuBytes,
+      ijazahBytes,
+      fotoBytes;
+  String? akteUrl, kkUrl, ktpAyahUrl, ktpIbuUrl, ijazahUrl, fotoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +106,6 @@ class _PendaftaranState extends State<Pendaftaran> {
               _buildInput(citizenshipController, 'Kewarganegaraan'),
               const SizedBox(height: 16),
               _buildInput(fromSchoolController, 'Asal Sekolah'),
-              const SizedBox(height: 16),
-              _buildUploadField(), // Untuk dokumen
               const SizedBox(height: 16),
               _buildInput(taController, 'Tahun Ajaran'),
               const SizedBox(height: 16),
@@ -204,14 +211,8 @@ class _PendaftaranState extends State<Pendaftaran> {
       value: major,
       decoration: _inputDecoration('Jurusan'),
       items: const [
-        DropdownMenuItem(
-          value: 'TKJ',
-          child: Text('TKJ'),
-        ),
-        DropdownMenuItem(
-          value: 'RPL',
-          child: Text('RPL'),
-        ),
+        DropdownMenuItem(value: 'TKJ', child: Text('TKJ')),
+        DropdownMenuItem(value: 'RPL', child: Text('RPL')),
       ],
       onChanged: (value) {
         setState(() {
@@ -284,63 +285,53 @@ class _PendaftaranState extends State<Pendaftaran> {
     );
   }
 
-  Widget _buildUploadField() {
-    return TextFormField(
-      controller: dokumenController,
-      readOnly: true,
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fitur upload belum tersedia')),
-        );
-      },
-      decoration: _inputDecoration(
-        'Upload Dokumen',
-      ).copyWith(suffixIcon: const Icon(Icons.upload_file)),
-    );
-  }
-
   Widget _buildButtonKirim() {
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
-// ...existing code...
-onPressed: () async {
-  if (_formKey.currentState!.validate()) {
-    // Hitung umur dari tanggal lahir
-    DateTime birthDate = DateTime.parse(tanggalLahirController.text);
-    DateTime now = DateTime.now();
-    int age = now.year - birthDate.year;
-    if (now.month < birthDate.month ||
-        (now.month == birthDate.month && now.day < birthDate.day)) {
-      age--;
-    }
+        // ...existing code...
+        onPressed: () async {
+          final prefs = await SharedPreferences.getInstance();
+          final documentID = prefs.getString('documentID');
+          if (_formKey.currentState!.validate()) {
+            // Hitung umur dari tanggal lahir
+            DateTime birthDate = DateTime.parse(tanggalLahirController.text);
+            DateTime now = DateTime.now();
+            int age = now.year - birthDate.year;
+            if (now.month < birthDate.month ||
+                (now.month == birthDate.month && now.day < birthDate.day)) {
+              age--;
+            }
 
-    final data = {
-      "fullName": namaController.text,
-      "placeOfBirth": tempatLahirController.text,
-      "dateOfBirth": tanggalLahirController.text,
-      "NISN": nisnController.text,
-      "NIK": nikController.text,
-      "address": alamatController.text,
-      "phone": phoneController.text,
-      "gender": jenisKelamin,
-      "major": major,
-      "religion": religion,
-      "orphanStatus": orphanStatus,
-      "Brothers": int.tryParse(brothersController.text) ?? 0,
-      "blood_type": bloodType,
-      "child_number": int.tryParse(childNumberController.text) ?? 0,
-      "citizenship": citizenshipController.text,
-      "from_school": fromSchoolController.text,
-      // "TA": taController.text,
-      "age": age, // <-- tambahkan ini!
-    };
-    final success = await SiswaService().createStudent(data);
-  }
-  context.goNamed(myRouter.Home);
-}
-,
+            final data = {
+              "fullName": namaController.text,
+              "placeOfBirth": tempatLahirController.text,
+              "dateOfBirth": tanggalLahirController.text,
+              "NISN": nisnController.text,
+              "NIK": nikController.text,
+              "address": alamatController.text,
+              "phone": phoneController.text,
+              "gender": jenisKelamin,
+              "major": major,
+              "religion": religion,
+              "orphanStatus": orphanStatus,
+              "Brothers": int.tryParse(brothersController.text) ?? 0,
+              "blood_type": bloodType,
+              "child_number": int.tryParse(childNumberController.text) ?? 0,
+              "citizenship": citizenshipController.text,
+              "from_school": fromSchoolController.text,
+              "documentID": documentID,
+              // "TA": taController.text,
+              "age": age, // <-- tambahkan ini!
+            };
+            await SiswaService().createStudent(data);
+            if (documentID != String) {
+              data["documentID"] = documentID;
+            }
+            context.goNamed(myRouter.Home);
+          }
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF00D084), // hijau
           foregroundColor: Colors.white, // teks putih

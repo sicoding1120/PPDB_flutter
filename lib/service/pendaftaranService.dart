@@ -21,7 +21,7 @@ class SiswaService {
   }
 
   // Kirim data pendaftaran siswa (POST)
-  Future<bool> createStudent(Map<String, dynamic> data) async {
+  Future createStudent(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString('Login');
     if (userJson == null) {
@@ -41,12 +41,17 @@ class SiswaService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    
+
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
-      final studentId = responseData['data']['ID'];
-      await prefs.setString('StudentID', studentId);
-      print('StudentID saved: $studentId');
+      final dataObj = responseData['data'];
+      if (dataObj != null && dataObj['ID'] != null) {
+        final studentId = dataObj['ID'];
+        await prefs.setString('StudentID', studentId.toString());
+        print('StudentID saved: $studentId');
+      } else {
+        print('StudentID null, response: ${response.body}');
+      }
       return true;
     } else {
       print('Gagal daftar siswa: ${response.body}');
@@ -54,7 +59,7 @@ class SiswaService {
     }
   }
 
-  Future<bool> createFather(Map<String, dynamic> data) async {
+  Future createFather(Map<String, dynamic> data) async {
     final url = Uri.parse('$baseUrl/parent/create-father');
     final response = await http.post(
       url,
@@ -75,7 +80,7 @@ class SiswaService {
     }
   }
 
-  Future<bool> createMother(Map<String, dynamic> data) async {
+  Future createMother(Map<String, dynamic> data) async {
     final url = Uri.parse('$baseUrl/parent/create-mother');
     final response = await http.post(
       url,

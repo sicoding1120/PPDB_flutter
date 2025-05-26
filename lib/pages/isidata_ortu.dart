@@ -1,9 +1,13 @@
 // ignore_for_file: unused_element
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
 import 'package:ppdb_project/service/pendaftaranService.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:ppdb_project/service/uploadService.dart';
 
 class IsidataOrtu extends StatefulWidget {
   const IsidataOrtu({super.key});
@@ -42,6 +46,23 @@ class _IsidataOrtuState extends State<IsidataOrtu> {
   final TextEditingController kewarganegaraanIbuController = TextEditingController();
 
   bool isAyah = true; // true = form ayah, false = form ibu
+
+  Uint8List? imageData;
+  String? uploadImage;
+
+    Future pilihNupload() async {
+    final image = await ImagePickerWeb.getImageAsBytes();
+    if (image == null) return;
+    setState(() {
+      imageData = image;
+    });
+    final url = await UploadService().uploadImage(image);
+    if (url != null) {
+      setState(() {
+        uploadImage = url['secure_url'] as String?;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +112,19 @@ class _IsidataOrtuState extends State<IsidataOrtu> {
     );
   }
 
-  Widget _buildInput(TextEditingController controller, String hint) {
-    return TextFormField(
-      controller: controller,
-      decoration: _inputDecoration(hint),
-      validator: (value) => value == null || value.isEmpty ? 'Wajib diisi' : null,
-    );
-  }
+Widget _buildInput(TextEditingController controller, String hint, {bool isRequired = false}) {
+  return TextFormField(
+    controller: controller,
+    decoration: _inputDecoration(hint),
+    validator: (value) {
+      if (isRequired && (value == null || value.isEmpty)) {
+        return 'Wajib diisi';
+      }
+      return null; // Tidak ada error
+    },
+  );
+}
+
 
   Widget _buildDateInput(TextEditingController controller, String hint) {
     return TextFormField(
@@ -282,21 +309,19 @@ class _IsidataOrtuState extends State<IsidataOrtu> {
               "education": pendidikanIbuController.text,
               "title": gelarIbuController.text,
               "citizenship": kewarganegaraanIbuController.text,
-              
             };
             final ibuSuccess = await SiswaService().createMother(dataIbu);
             if (ibuSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Data berhasil dikirim')),
               );
-              context.go("/uploaddoc");
+              context.goNamed(myRouter.Uploaddoc);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Gagal mengirim data ibu')),
               );
             }
           }
-          context.goNamed(myRouter.Pendaftaran);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF00D084),
@@ -312,4 +337,6 @@ class _IsidataOrtuState extends State<IsidataOrtu> {
       ),
     );
   }
+
+
 }
