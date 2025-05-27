@@ -17,5 +17,9 @@ class myRouter {
    static const String hasil = "/hasil";
   static const String ujian = "/ujian";
   static const String payment = "/payment";
-   static const String isiujian = "/isiujian";
+   static const String isiujianAgama = "/isiujianAgama";
+   static const String isiujianUmum = "/isiujianUmum";
+   static const String isiujianBahasa = "/isiujianBahasa";
+   static const String isiujianPsikotes = "/isiujianPsikotes";
+
 }

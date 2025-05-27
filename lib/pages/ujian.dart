@@ -71,7 +71,7 @@ class _UjianState extends State<Ujian> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Color.fromARGB(255, 255, 242, 242),
                   ),
                 ),
               ],
@@ -95,8 +95,8 @@ class _UjianState extends State<Ujian> {
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         'https://res.cloudinary.com/dqbtkdora/image/upload/v1747543370/dps1vegobv4ewwwxxsdb.webp',
-                        width: 58,
-                        height: 58,
+                        width: 100,
+                        height: 120,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -130,7 +130,32 @@ class _UjianState extends State<Ujian> {
                       ],
                     ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {},
+                    onTap: () {
+                      // Tentukan route sesuai index atau judul materi
+                      String route;
+                      switch (soal['judul']) {
+                        case 'Diniyyah':
+                          route = '/isiujianAgama';
+                          break;
+                        case 'Umum':
+                          route = '/isiujianUmum';
+                          break;
+                        case 'B.Inggris':
+                          route = '/isiujianBahasa';
+                          break;
+                        case 'Psikotes':
+                          route = '/isiujianPsikotes';
+                          break;
+                        default:
+                          route = '/isiujianUmum'; // Default route if no match
+                          break;
+                      }
+                      context.go(route, extra: {
+                        'judul': soal['judul'],
+                        'deskripsi': soal['deskripsi'],
+                        'waktu': soal['waktu'],
+                      });
+                    },
                   ),
                 );
               },
@@ -140,4 +165,4 @@ class _UjianState extends State<Ujian> {
       ),
     );
   }
-} 
+}

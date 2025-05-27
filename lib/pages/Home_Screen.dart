@@ -70,9 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                   onTap: () => context.go("/profile"),
-                  child: const CircleAvatar(
+                  child:  CircleAvatar(
                     radius: 24,
-                    backgroundImage: AssetImage("assets/profile.jpg"),
+                   child: Icon(Icons.person, size: 28, color: Colors.black),
+                    backgroundColor: Colors.grey[300],
                   ),
                 ),
                 const SizedBox(width: 12),
