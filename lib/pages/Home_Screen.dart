@@ -1,8 +1,10 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ppdb_project/model/userModel.dart';
+import 'package:ppdb_project/router/app_router.dart';
 
 class MyPPDBHomePage extends StatefulWidget {
   const MyPPDBHomePage({super.key});
@@ -10,6 +12,8 @@ class MyPPDBHomePage extends StatefulWidget {
   @override
   State<MyPPDBHomePage> createState() => _MyPPDBHomePageState();
 }
+
+String? imageUrl;
 
 class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
   int _currentCarousel = 0; // Untuk indikator carousel

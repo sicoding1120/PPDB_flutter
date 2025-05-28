@@ -2,6 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/service/uploadService.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'dart:typed_data';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Uploaddoc extends StatefulWidget {
   const Uploaddoc({super.key});
@@ -12,15 +19,104 @@ class Uploaddoc extends StatefulWidget {
 
 class _uploaddocState extends State<Uploaddoc> {
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController tempatLahirController = TextEditingController();
-  final TextEditingController tanggalLahirController = TextEditingController();
-  final TextEditingController nisnController = TextEditingController();
   final TextEditingController dokumenController = TextEditingController();
+  final TextEditingController akteController = TextEditingController();
+  final TextEditingController kkController = TextEditingController();
+  final TextEditingController ktpAyahController = TextEditingController();
+  final TextEditingController ktpIbuController = TextEditingController();
+  final TextEditingController ijazahController = TextEditingController();
+  final TextEditingController fotoController = TextEditingController();
 
-  String? jenisKelamin;
-  String? jenisTest;
+  Uint8List? akteBytes,
+      kkBytes,
+      ktpAyahBytes,
+      ktpIbuBytes,
+      ijazahBytes,
+      fotoBytes;
+  String? akteUrl, kkUrl, ktpAyahUrl, ktpIbuUrl, ijazahUrl, fotoUrl;
+
+  Widget _buildUploadField({
+    required String label,
+    required TextEditingController controller,
+    required bool isUploaded,
+    required Function(Uint8List?, String?) onUpload,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      onTap: () async {
+        final file = await ImagePickerWeb.getImageAsBytes();
+        if (file == null) return;
+        final data = await UploadService().uploadImage(file);
+        if (data != null) {
+          onUpload(file, data['secure_url']);
+          controller.text = '$label terupload';
+        }
+      },
+      decoration: InputDecoration(
+        labelText: isUploaded ? '$label terupload' : label,
+        labelStyle: TextStyle(
+          color: isUploaded ? Colors.green : Colors.grey,
+          fontWeight: FontWeight.w500,
+        ),
+        filled: true,
+        fillColor: isUploaded ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: isUploaded ? Colors.green : Colors.grey,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: isUploaded ? Colors.green : Colors.blue,
+            width: 2,
+          ),
+        ),
+        suffixIcon: Icon(
+          isUploaded ? Icons.check_circle : Icons.upload_file,
+          color: isUploaded ? Colors.green : Colors.grey,
+        ),
+      ),
+      validator: (value) => isUploaded ? null : 'Wajib upload dokumen',
+    );
+  }
+
+  Widget _buildButtonKirim() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            final payload = {
+              'akte_url': akteUrl,
+              'familyCard_url': kkUrl,
+              'fatherKTP_url': ktpAyahUrl,
+              'motherKTP_url': ktpIbuUrl,
+              'ijazah_url': ijazahUrl,
+              'studentPicture_url': fotoUrl,
+            };
+            // Setelah berhasil saveDocument
+            await UploadService().saveDocument(payload);
+          context.goNamed(myRouter.Pendaftaran);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF00D084),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        child: const Text(
+          'Selanjutnya',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +131,8 @@ class _uploaddocState extends State<Uploaddoc> {
           },
         ),
         title: const Text(
-          'isi data dokumen',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+          'Upload Dokumen',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
       ),
@@ -50,118 +143,81 @@ class _uploaddocState extends State<Uploaddoc> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-               _buildUploadField(),
-                 const SizedBox(height: 35),
+              _buildUploadField(
+                label: 'Upload Akte',
+                controller: akteController,
+                isUploaded: akteUrl != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    akteBytes = bytes;
+                    akteUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildUploadField(
+                label: 'Upload KK',
+                controller: kkController,
+                isUploaded: kkUrl != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    kkBytes = bytes;
+                    kkUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildUploadField(
+                label: 'Upload KTP Ayah',
+                controller: ktpAyahController,
+                isUploaded: ktpAyahBytes != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    ktpAyahBytes = bytes;
+                    ktpAyahUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildUploadField(
+                label: 'Upload KTP Ibu',
+                controller: ktpIbuController,
+                isUploaded: ktpIbuBytes != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    ktpIbuBytes = bytes;
+                    ktpIbuUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildUploadField(
+                label: 'Upload Ijazah',
+                controller: ijazahController,
+                isUploaded: ijazahBytes != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    ijazahBytes = bytes;
+                    ijazahUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              _buildUploadField(
+                label: 'Upload Foto',
+                controller: fotoController,
+                isUploaded: fotoBytes != null,
+                onUpload: (bytes, url) {
+                  setState(() {
+                    fotoBytes = bytes;
+                    fotoUrl = url;
+                  });
+                },
+              ),
+              const SizedBox(height: 35),
               _buildButtonKirim(),
-             
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      filled: true,
-      fillColor: const Color(0xFFF5F5F5),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFFDADADA)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFF00D084), width: 2),
-      ),
-    );
-  }
-
-  Widget _buildInput(TextEditingController controller, String hint) {
-    return TextFormField(
-      controller: controller,
-      decoration: _inputDecoration(hint),
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib diisi' : null,
-    );
-  }
-
-  Widget _buildDropdownJenisKelamin() {
-    return DropdownButtonFormField<String>(
-      value: jenisKelamin,
-      decoration: _inputDecoration('Jenis Kelamin'),
-      items: const [
-        DropdownMenuItem(value: 'Laki-laki', child: Text('Laki-laki')),
-        DropdownMenuItem(value: 'Perempuan', child: Text('Perempuan')),
-      ],
-      onChanged: (value) {
-        setState(() {
-          jenisKelamin = value;
-        });
-      },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
-    );
-  }
-
-  Widget _buildDropdownJenisTest() {
-    return DropdownButtonFormField<String>(
-      value: jenisTest,
-      decoration: _inputDecoration('Test OFFLINE / ONLINE'),
-      items: const [
-        DropdownMenuItem(value: 'Offline', child: Text('Offline')),
-        DropdownMenuItem(value: 'Online', child: Text('Online')),
-      ],
-      onChanged: (value) {
-        setState(() {
-          jenisTest = value;
-        });
-      },
-      validator: (value) =>
-          value == null || value.isEmpty ? 'Wajib dipilih' : null,
-    );
-  }
-
-  Widget _buildUploadField() {
-    return TextFormField(
-      controller: dokumenController,
-      readOnly: true,
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fitur upload belum tersedia')),
-        );
-      },
-      decoration: _inputDecoration('Upload Dokumen').copyWith(
-        suffixIcon: const Icon(Icons.upload_file),
-      ),
-    );
-  }
-
-  Widget _buildButtonKirim() {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Data berhasil dikirim')),
-            );
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          
-          backgroundColor: const Color(0xFF00D084), // hijau
-          foregroundColor: Colors.white, // teks putih
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-        ),
-        child: const Text(
-
-          'Selanjutnya',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),
     );

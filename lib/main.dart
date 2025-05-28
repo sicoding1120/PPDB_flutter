@@ -1,21 +1,51 @@
-import 'package:firebase_core/firebase_core.dart';
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'firebase_options.dart';
 import 'router/app_router.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);  // Inisialisasi Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: GoRouter(routes: router), // Gunakan konfigurasi dari app_router.dart
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        final GoRouter customRouter = GoRouter(
+          initialLocation: '/splash',
+          routes: router,
+          redirect: (context, state) {
+            final user = FirebaseAuth.instance.currentUser;
+            final loggingIn =
+                state.uri.toString() == '/login' ||
+                state.uri.toString() == '/regis' ||
+                state.uri.toString() == '/forget';
+            if (state.uri.toString() == '/splash') return null;
+            if (user == null && !loggingIn) return '/login';
+            if (user != null && loggingIn) return '/home';
+            return null;
+          },
+        );
+        if (snapshot.connectionState == ConnectionState.active) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Simple App',
+            routerConfig: customRouter,
+          );
+        } else {
+          return MaterialApp(
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+          );
+        }
+      },
     );
   }
 }

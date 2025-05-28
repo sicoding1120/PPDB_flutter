@@ -1,3 +1,4 @@
+// ignore_for_file: unused_import
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -86,7 +88,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 50),
                 ElevatedButton(
-                  onPressed: () => AuthService().loginWithEmailPassword(context,_emailController.text, _passwordController.text), // Panggil fungsi _login
+                  onPressed: () => AuthService().loginWithEmailPassword(
+                    context,
+                    _emailController.text,
+                    _phoneController.text,     // phone
+                    _passwordController.text,  // password
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF24D674),
                     minimumSize: Size(double.infinity, 50),
@@ -101,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () => AuthService().signinWithGoogle(context),
                   icon: Image.network("https://res.cloudinary.com/dlnfp5fej/image/upload/v1747119026/vp0skepjrws3a97e7xwh.png", width: 20,height: 20),
                   label: Text(
                     'Continue with Google',

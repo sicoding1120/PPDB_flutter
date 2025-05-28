@@ -13,6 +13,7 @@ class myRouter {
   static const String Uploaddoc = "/uploaddoc";
    static const String profile = "/profile";
    static const String KTM = "/KTM";
+   static const String test = "/test";
    static const String jadwal = "/jadwal";
    static const String hasil = "/hasil";
   static const String ujian = "/ujian";
