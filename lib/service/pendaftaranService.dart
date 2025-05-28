@@ -21,19 +21,12 @@ class SiswaService {
   }
 
   // Kirim data pendaftaran siswa (POST)
-  Future createStudent(Map<String, dynamic> data) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString('Login');
-    if (userJson == null) {
+  Future<void> createStudent(Map<String, dynamic> data) async {
+    // Ambil documentID dari data, bukan dari SharedPreferences
+    final documentID = data['documentID'];
+    if (documentID == null) {
       throw Exception('User belum login!');
     }
-    final userMap = jsonDecode(userJson);
-    final userId = userMap['ID'];
-    final fatherId = prefs.getString('FatherID');
-    final motherId = prefs.getString('MotherID');
-    data['userID'] = userId;
-    data['fatherID'] = fatherId;
-    data['motherID'] = motherId;
 
     final url = Uri.parse('$baseUrl/student/create');
     final response = await http.post(
@@ -47,15 +40,14 @@ class SiswaService {
       final dataObj = responseData['data'];
       if (dataObj != null && dataObj['ID'] != null) {
         final studentId = dataObj['ID'];
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('StudentID', studentId.toString());
         print('StudentID saved: $studentId');
       } else {
         print('StudentID null, response: ${response.body}');
       }
-      return true;
     } else {
       print('Gagal daftar siswa: ${response.body}');
-      return false;
     }
   }
 

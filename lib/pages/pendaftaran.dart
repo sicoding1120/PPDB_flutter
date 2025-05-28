@@ -294,6 +294,12 @@ class _PendaftaranState extends State<Pendaftaran> {
         onPressed: () async {
           final prefs = await SharedPreferences.getInstance();
           final documentID = prefs.getString('documentID');
+          if (documentID == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Silakan login terlebih dahulu!')),
+            );
+            return;
+          }
           if (_formKey.currentState!.validate()) {
             // Hitung umur dari tanggal lahir
             DateTime birthDate = DateTime.parse(tanggalLahirController.text);
@@ -302,6 +308,7 @@ class _PendaftaranState extends State<Pendaftaran> {
             if (now.month < birthDate.month ||
                 (now.month == birthDate.month && now.day < birthDate.day)) {
               age--;
+              return;
             }
 
             final data = {

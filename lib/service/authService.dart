@@ -128,7 +128,9 @@ class AuthService {
         //Shared
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('Login', jsonEncode(loginData.toJson()));
+        await prefs.setString('UserId', responseData['data']['ID']); // <-- Tambahkan ini!
         print("Shared: ${prefs.getString('Login')}");
+        print("UserId: ${prefs.getString('UserId')}");
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login berhasil')),

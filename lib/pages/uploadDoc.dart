@@ -192,7 +192,7 @@ class _uploaddocState extends State<Uploaddoc> {
               ),
               const SizedBox(height: 20),
               _buildUploadField(
-                label: 'Upload Ijazah',
+                label: 'Upload Ijazah SMP',
                 controller: ijazahController,
                 isUploaded: ijazahBytes != null,
                 onUpload: (bytes, url) {
@@ -204,7 +204,7 @@ class _uploaddocState extends State<Uploaddoc> {
               ),
               const SizedBox(height: 20),
               _buildUploadField(
-                label: 'Upload Foto',
+                label: 'Upload Foto 3x4 / 4x6',
                 controller: fotoController,
                 isUploaded: fotoBytes != null,
                 onUpload: (bytes, url) {
