@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -32,7 +32,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
       'icon': Icons.school,
       'title': 'Pendaftaran',
       'color': Color(0xFFF50000),
-      'route': '/pendaftaran',
+      'route': '/isidataOrtu',
     },
     {
       'icon': Icons.schedule,
@@ -160,7 +160,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
           // Tombol notifikasi
           GestureDetector(
             onTap: () {
-              context.go('/profile');
+          
             },
             child: const CircleAvatar(
               radius: 18,
