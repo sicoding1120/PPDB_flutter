@@ -67,8 +67,9 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
   final List<Map<String, dynamic>> bottomNav = [
     {'icon': Icons.home, 'label': 'Home', 'route': '/home'},
     {'icon': Icons.calendar_today, 'label': 'Jadwal', 'route': '/jadwal'},
-    {'icon': Icons.support_agent, 'label': 'Customer service', 'route': '/customer_service'},
+    {'icon': Icons.support_agent, 'label': 'Customer', 'route': '/customer_service'},
     {'icon': Icons.card_membership, 'label': 'Kartu', 'route': '/KTM'},
+    
   ];
 
   @override
@@ -93,7 +94,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
             const SizedBox(height: 16),
             _buildCategoryGrid(), // Menu kategori
             const SizedBox(height: 20),
-            // Tambahkan bagian pengumuman jika ingin
+         
           ],
         ),
       ),
@@ -281,7 +282,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
       shape: const CircularNotchedRectangle(),
       notchMargin: 6,
       child: SizedBox(
-        height: 48,
+        height: 60,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
