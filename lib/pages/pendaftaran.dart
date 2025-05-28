@@ -301,13 +301,17 @@ class _PendaftaranState extends State<Pendaftaran> {
             return;
           }
           if (_formKey.currentState!.validate()) {
-            // Hitung umur dari tanggal lahir
             DateTime birthDate = DateTime.parse(tanggalLahirController.text);
             DateTime now = DateTime.now();
             int age = now.year - birthDate.year;
             if (now.month < birthDate.month ||
                 (now.month == birthDate.month && now.day < birthDate.day)) {
               age--;
+            }
+            if (age < 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Tanggal lahir tidak valid!')),
+              );
               return;
             }
 
@@ -329,14 +333,18 @@ class _PendaftaranState extends State<Pendaftaran> {
               "citizenship": citizenshipController.text,
               "from_school": fromSchoolController.text,
               "documentID": documentID,
-              // "TA": taController.text,
-              "age": age, // <-- tambahkan ini!
+              "age": age,
             };
-            await SiswaService().createStudent(data);
-            if (documentID != String) {
-              data["documentID"] = documentID;
+            print('Data yang dikirim: $data');
+            try {
+              await SiswaService().createStudent(data);
+              print('Selesai kirim');
+              context.goNamed(myRouter.Home);
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Gagal mengirim data: $e')),
+              );
             }
-            context.goNamed(myRouter.Home);
           }
         },
         style: ElevatedButton.styleFrom(

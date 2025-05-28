@@ -22,11 +22,16 @@ class SiswaService {
 
   // Kirim data pendaftaran siswa (POST)
   Future<void> createStudent(Map<String, dynamic> data) async {
-    // Ambil documentID dari data, bukan dari SharedPreferences
     final documentID = data['documentID'];
     if (documentID == null) {
       throw Exception('User belum login!');
     }
+
+    // Ambil ID lain dari SharedPreferences jika belum ada di data
+    final prefs = await SharedPreferences.getInstance();
+    data['userID'] ??= prefs.getString('UserID');
+    data['fatherID'] ??= prefs.getString('FatherID');
+    data['motherID'] ??= prefs.getString('MotherID');
 
     final url = Uri.parse('$baseUrl/student/create');
     final response = await http.post(
@@ -40,7 +45,6 @@ class SiswaService {
       final dataObj = responseData['data'];
       if (dataObj != null && dataObj['ID'] != null) {
         final studentId = dataObj['ID'];
-        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('StudentID', studentId.toString());
         print('StudentID saved: $studentId');
       } else {
