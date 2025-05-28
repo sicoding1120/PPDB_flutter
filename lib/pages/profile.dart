@@ -1,97 +1,174 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ppdb_project/service/authService.dart';
 
-class ProfilePage extends StatelessWidget {
-  final String username =
-      FirebaseAuth.instance.currentUser?.displayName ?? 'calon siswa';
-  final String email = FirebaseAuth.instance.currentUser?.email ?? 'Email siswa';
-  final String password = '********'; // Password tidak ditampilkan
+void main() {
+  runApp(ProfileApp());
+}
+
+class ProfileApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: ProfilePage(), debugShowCheckedModeBanner: false);
+  }
+}
+
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final Color greenColor = Color(0xFF24D674);
+
+  final TextEditingController usernameController = TextEditingController(
+    text: 'ibrahim',
+  );
+  final TextEditingController emailController = TextEditingController(
+    text: 'ibrahim@gmail.com',
+  );
+  final TextEditingController passwordController = TextEditingController(
+    text: '1234567890',
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
-          onPressed: () {
-            context.go('/home');
-          },
-        ),
-        title: Text('Profile', style: TextStyle(color: Colors.black)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: Icon(Icons.person, size: 60, color: Colors.black),
-            ),
-            SizedBox(height: 30),
-            _infoBox('Username :', username),
-            SizedBox(height: 12),
-            _infoBox('Email :', email),
-            SizedBox(height: 12),
-            _infoBox('Password :', password),
-            Spacer(),
-            // Icon Logout
-            Align(
-              alignment: Alignment.center,
-child: IconButton(
-  icon: Icon(Icons.logout, color: Colors.red),
+            // Top Row (Back & Edit Icons)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.blue),
+                    onPressed: () {
+                      context.go('/home');
+                    },
+                  ),
 
-  onPressed: () async {
-    final confirm = await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text("Keluar?"),
-        content: Text("Apakah Anda yakin ingin logout?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Batal")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Ya")),
-        ],
-      ),
-    );
+                  IconButton(
+                    icon: Icon(Icons.logout, color: Colors.red),
+                    onPressed: () async {
+                      final confirm = await showDialog(
+                        context: context,
+                        builder:
+                            (_) => AlertDialog(
+                              title: Text("Keluar?"),
+                              content: Text("Apakah Anda yakin ingin logout?"),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: Text("Batal"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text("Ya"),
+                                ),
+                              ],
+                            ),
+                      );
 
-    if (confirm == true) {
-      await FirebaseAuth.instance.signOut();
-      context.go("/login");
-    }
-  },
-)
-
-                
+                      if (confirm == true) {
+                        await FirebaseAuth.instance.signOut();
+                        context.go("/login");
+                      }
+                    },
+                  ),
+                ],
               ),
-            
-            SizedBox(height: 20),
+            ),
+
+            // Green Profile Box
+            Container(
+              margin: EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(vertical: 16),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: greenColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  CircleAvatar(
+                    radius: 35,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: Colors.black),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Ibrahim',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Form Fields
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Username:"),
+                  SizedBox(height: 5),
+                  TextField(
+                    controller: usernameController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Email:"),
+                  SizedBox(height: 5),
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Password:"),
+                  SizedBox(height: 5),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  Widget _infoBox(String label, String value) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Text(
-        '$label $value',
-        style: TextStyle(fontSize: 14, color: Colors.black),
-      ),
-    );
-  }
 }
+
+
+
+
+
+

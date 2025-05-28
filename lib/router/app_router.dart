@@ -10,6 +10,10 @@ import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
 import 'package:ppdb_project/pages/Test.dart';
 import 'package:ppdb_project/pages/hasiltest.dart';
+import 'package:ppdb_project/pages/isiUjian_agama.dart';
+import 'package:ppdb_project/pages/isiUjian_bahasa.dart';
+import 'package:ppdb_project/pages/isiUjian_psikotes.dart';
+import 'package:ppdb_project/pages/isiUjian_umum.dart';
 import 'package:ppdb_project/pages/isidata_ortu.dart';
 import 'package:ppdb_project/pages/jadwaltest.dart';
 import 'package:ppdb_project/pages/ktm.dart';
@@ -93,4 +97,26 @@ final router = [
     name: myRouter.payment,
     builder: (context, state) => Payment(),
   ),
+
+  GoRoute(path: "/isiujianAgama",
+    name: myRouter.isiujianAgama,
+    builder: (context, state) => isiujianAgama(),
+  ),
+
+  GoRoute(path: "/isiujianUmum",
+    name: myRouter.isiujianUmum,
+    builder: (context, state) => IsiujianUmum(),
+  ),
+
+  GoRoute(path: "/isiujianBahasa",
+    name: myRouter.isiujianBahasa,
+    builder: (context, state) => IsiujianBahasa(),
+  ),
+
+  GoRoute(path: "/isiujianPsikotes",
+    name: myRouter.isiujianPsikotes,
+    builder: (context, state) => isiujianPsikotes(),
+  ),
+
+  
 ];
