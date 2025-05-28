@@ -14,6 +14,7 @@ import 'package:ppdb_project/pages/jadwaltest.dart';
 import 'package:ppdb_project/pages/ktm.dart';
 import 'package:ppdb_project/pages/payment.dart';
 import 'package:ppdb_project/pages/pendaftaran.dart';
+import 'package:ppdb_project/pages/popupHasil.dart';
 import 'package:ppdb_project/pages/profile.dart';
 import 'package:ppdb_project/pages/ujian.dart';
 import 'package:ppdb_project/pages/uploadDoc.dart';
@@ -44,7 +45,7 @@ final router = [
   GoRoute(
     path: "/home",
     name: myRouter.Home,
-    builder: (context, state) => HomeScreen(),
+    builder: (context, state) => MyPPDBHomePage(),
   ),
 
   GoRoute(path: "/pendaftaran",
@@ -111,6 +112,11 @@ final router = [
   GoRoute(path: "/isiujianPsikotes",
     name: myRouter.isiujianPsikotes,
     builder: (context, state) => isiujianPsikotes(),
+  ),
+
+  GoRoute(path: "/popupHasil",
+    name: myRouter.popupHasil,
+    builder: (context, state) => Popuphasil(),
   ),
 
   
