@@ -1,254 +1,342 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/model/userModel.dart';
 import 'package:ppdb_project/router/app_router.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class MyPPDBHomePage extends StatefulWidget {
+  const MyPPDBHomePage({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MyPPDBHomePage> createState() => _MyPPDBHomePageState();
 }
 
 String? imageUrl;
 
-class _HomeScreenState extends State<HomeScreen> {
-  int currentIndex = 1; // 0: Daftar, 1: Home, 2: Notif/Profile
-  int? hoveredIndex;
-  DataUser? userData;
+class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
+  int _currentCarousel = 0; // Untuk indikator carousel
+  int _currentNav = 0; // Untuk menandai menu bottom bar yang aktif
 
-  void _onNavTap(int index) {
-    setState(() => currentIndex = index);
-    switch (index) {
-      case 0:
-        context.go("/KTM");
-        break;
-      case 1:
-        break;
-      case 2:
-        context.go("/profile");
-        break;
-      case 3:
-        context.go("/");
-        break;
-    }
-  }
+  // Daftar gambar untuk carousel (bisa pakai link dari Cloudinary atau lainnya)
+  final List<String> imageList = [
+    'https://res.cloudinary.com/dqbtkdora/image/upload/v1748401414/slk5yoaa5waqxyg2rfc7.jpg',
+    'https://res.cloudinary.com/dqbtkdora/image/upload/v1748401414/slk5yoaa5waqxyg2rfc7.jpg',
+    'https://res.cloudinary.com/dqbtkdora/image/upload/v1748401414/slk5yoaa5waqxyg2rfc7.jpg',
+  ];
+
+  // Daftar menu kategori utama
+  final List<Map<String, dynamic>> categories = [
+    {
+      'icon': Icons.school,
+      'title': 'Pendaftaran',
+      'color': Color(0xFFF50000),
+      'route': '/pendaftaran',
+    },
+    {
+      'icon': Icons.schedule,
+      'title': 'Jadwal Test',
+      'color': Color(0xFFFCAA09),
+      'route': '/jadwal',
+    },
+    {
+      'icon': Icons.bar_chart,
+      'title': 'Hasil Test',
+      'color': Color(0xFF24D674),
+      'route': '/popupHasil',
+    },
+    {
+      'icon': Icons.payment,
+      'title': 'Pembayaran',
+      'color': Color(0xFF005FD7),
+      'route': '/payment',
+    },
+    {
+      'icon': Icons.edit_note,
+      'title': 'Test PPDB',
+      'color': Color(0xFFFCAA09),
+      'route': '/ujian',
+    },
+    {
+      'icon': Icons.upload_file,
+      'title': 'Upload File',
+      'color': Color(0xFFFF5353),
+      'route': '/uploaddoc',
+    },
+ 
+  ];
+
+  // Daftar menu bottom navigation bar
+  final List<Map<String, dynamic>> bottomNav = [
+    {'icon': Icons.home, 'label': 'Home', 'route': '/home'},
+    {'icon': Icons.calendar_today, 'label': 'Jadwal', 'route': '/jadwal'},
+    {'icon': Icons.support_agent, 'label': 'Customer service', 'route': '/customer_service'},
+    {'icon': Icons.card_membership, 'label': 'Kartu', 'route': '/KTM'},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final userName = FirebaseAuth.instance.currentUser?.displayName ?? 'calon siswa';
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F3F3),
+      backgroundColor: Colors.white,
+      // AppBar kosong agar header custom
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: SizedBox.shrink(),
+      ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(userName),
-            const SizedBox(height: 20),
-            _buildLogo(),
+            _buildHeader(), // Header aplikasi
             const SizedBox(height: 30),
-            _buildMenuGrid(),
-            const SizedBox(height: 32),
+            _buildCarousel(), // Gambar carousel
+            _buildCarouselIndicator(), // Indikator carousel
+            const SizedBox(height: 20),
+            _buildCategoryTitle(), // Judul kategori
+            const SizedBox(height: 16),
+            _buildCategoryGrid(), // Menu kategori
+            const SizedBox(height: 20),
+            // Tambahkan bagian pengumuman jika ingin
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: _buildBottomBar(), // Bottom navigation bar
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        elevation: 4,
+        onPressed: () {
+          // Navigasi ke halaman profile
+          context.go('/profile');
+        },
+        child: const Icon(Icons.person, color: Color(0xFF24D674), size: 24),
+      ),
     );
   }
 
-  Widget _buildHeader(String userName) {
+  // Header aplikasi
+  Widget _buildHeader() {
     return Container(
-      height: 220,
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 18),
       decoration: const BoxDecoration(
         color: Color(0xFF24D674),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
       ),
-      child: Stack(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Positioned(
-            top: 60,
-            left: 24,
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.go("/profile"),
-                  child:  CircleAvatar(
-                    radius: 24,
-                   child: Icon(Icons.person, size: 28, color: Colors.black),
-                    backgroundColor: Colors.grey[300],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                RichText(
-                  text: TextSpan(
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                    children: [
-                      const TextSpan(text: "Hai "),
-                      WidgetSpan(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4.0),
-                          child: Text("👋", style: TextStyle(fontSize: 18)),
-                        ),
-                      ),
-                      TextSpan(text: userName),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 60,
-            right: 24,
-            child: Container(
-              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-              child: IconButton(
-                icon: const Icon(Icons.notifications, color: Color(0xFF24D674)),
-                onPressed: () {},
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    return RichText(
-      text: const TextSpan(
-        children: [
-          TextSpan(
-            text: 'MY',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
-          ),
-          TextSpan(
-            text: 'PPDB',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF24D674)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMenuGrid() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Center(
-            child: Text(
-              'Daftar Kegiatan',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 108, 108, 108)),
-            ),
-          ),
-          const SizedBox(height: 25),
-          GridView.count(
-            crossAxisCount: 3,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 1,
+          Row(
             children: [
-              _iconMenu("Pendaftaran", Icons.how_to_reg, () => context.goNamed(myRouter.isidataOrtu),Colors.orange ),
-              _iconMenu("Jadwal Test", Icons.event, () => context.goNamed(myRouter.jadwal), Colors.green),
-              _iconMenu("Hasil Test", Icons.fact_check, () => context.goNamed(myRouter.hasil), Colors.lightBlueAccent),
-              _iconMenu("Pembayaran", Icons.payment, () => context.goNamed(myRouter.payment), Colors.redAccent),
-              _iconMenu("Test PPDB", Icons.task_alt, () => context.goNamed(myRouter.ujian), Colors.indigo),
-              _iconMenu("Upload Dok.", Icons.upload_file, () => context.goNamed(myRouter.Uploaddoc), Colors.lime),
+              // Foto/logo sekolah
+              const CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage("https://res.cloudinary.com/dqbtkdora/image/upload/v1747621151/yxjmhkvfpu56xad3lz6c.png"),
+              ),
+              const SizedBox(width: 10),
+              // Nama aplikasi
+              RichText(
+                text: const TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'MY',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
+                    ),
+                    TextSpan(
+                      text: 'PPDB',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    TextSpan(
+                      text: ' SMK',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+          // Tombol notifikasi
+          GestureDetector(
+            onTap: () {
+              context.go('/profile');
+            },
+            child: const CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.notifications, color: Color(0xFF24D674), size: 22),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _iconMenu(String label, IconData icon, VoidCallback onTap, Color iconColor) {
+  // Carousel gambar
+  Widget _buildCarousel() {
+    return CarouselSlider(
+      items: imageList
+          .map((item) => ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(item, fit: BoxFit.cover, width: double.infinity),
+              ))
+          .toList(),
+      options: CarouselOptions(
+        height: 160,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _currentCarousel = index;
+          });
+        },
+      ),
+    );
+  }
+
+  // Indikator carousel (titik-titik di bawah gambar)
+  Widget _buildCarouselIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: imageList.asMap().entries.map((entry) {
+        return Container(
+          width: 8.0,
+          height: 8.0,
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _currentCarousel == entry.key ? Colors.green : Colors.grey,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // Judul kategori
+  Widget _buildCategoryTitle() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Center(
+        child: Text(
+          'MyPPDB Category',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  // Grid menu kategori
+  Widget _buildCategoryGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GridView.count(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        children: categories
+            .map((cat) => _buildCategory(
+                  cat['icon'],
+                  cat['title'],
+                  cat['color'],
+                  () => context.go(cat['route']),
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  // Widget untuk satu menu kategori
+  Widget _buildCategory(IconData icon, String title, Color color, VoidCallback onTap) {
+    // Hanya icon person yang bulat sempurna
+    final bool isPerson = icon == Icons.person;
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F3F3),
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300),
+              color: color,
+              shape: isPerson ? BoxShape.circle : BoxShape.rectangle,
+              borderRadius: isPerson ? null : BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 28, color: iconColor),
+            child: Icon(icon, color: Colors.white),
+            alignment: Alignment.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
-            label,
+            title,
+            style: const TextStyle(fontSize: 12),
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNav() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFA726),
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: const [
-            BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _navBarItem(0, Icons.calendar_view_day, "Kartu tanda siswa"),
-            _navBarItem(1, Icons.home, "Home"),
-            _navBarItem(3, Icons.support_agent, "Bantuan"),
-          ],
+  // Bottom navigation bar
+  BottomAppBar _buildBottomBar() {
+    return BottomAppBar(
+      color: Colors.white,
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 6,
+      child: SizedBox(
+        height: 48,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // 2 menu kiri
+              ...List.generate(
+                2,
+                (i) => _navBarItem(i, bottomNav[i]['icon'], bottomNav[i]['label'], bottomNav[i]['route']),
+              ),
+              const SizedBox(width: 40), // ruang untuk FAB di tengah
+              // 2 menu kanan
+              ...List.generate(
+                2,
+                (i) => _navBarItem(i + 2, bottomNav[i + 2]['icon'], bottomNav[i + 2]['label'], bottomNav[i + 2]['route']),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _navBarItem(int index, IconData icon, String label) {
-    final isActive = currentIndex == index || hoveredIndex == index;
+  // Widget untuk satu item bottom bar
+  Widget _navBarItem(int index, IconData icon, String label, String route) {
+    final bool isActive = _currentNav == index;
     return Expanded(
-      child: MouseRegion(
-        onEnter: (_) => setState(() => hoveredIndex = index),
-        onExit: (_) => setState(() => hoveredIndex = null),
-        child: GestureDetector(
-          onTap: () => _onNavTap(index),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isActive ? Colors.white : Colors.transparent,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  icon,
-                  color: isActive ? const Color(0xFF24D674) : Colors.white,
-                ),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _currentNav = index;
+          });
+          context.go(route);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isActive ? const Color(0xFF24D674) : Colors.grey,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive ? const Color(0xFF24D674) : Colors.grey,
+                fontSize: 11,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
               ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isActive ? Colors.white : Colors.white70,
-                  fontSize: 11,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

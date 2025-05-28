@@ -22,5 +22,6 @@ class myRouter {
    static const String isiujianUmum = "/isiujianUmum";
    static const String isiujianBahasa = "/isiujianBahasa";
    static const String isiujianPsikotes = "/isiujianPsikotes";
+   static const String popupHasil = "/popupHasil";
 
 }
