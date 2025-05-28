@@ -32,7 +32,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
       'icon': Icons.school,
       'title': 'Pendaftaran',
       'color': Color(0xFFF50000),
-      'route': '/pendaftaran',
+      'route': '/isidataOrtu',
     },
     {
       'icon': Icons.schedule,
@@ -79,6 +79,7 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false, // Tambahkan ini
       // AppBar kosong agar header custom
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0),
@@ -101,13 +102,12 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(), // Bottom navigation bar
+      bottomNavigationBar: _buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         elevation: 4,
         onPressed: () {
-          // Navigasi ke halaman profile
           context.go('/profile');
         },
         child: const Icon(Icons.person, color: Color(0xFF24D674), size: 24),
@@ -264,13 +264,13 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
               shape: isPerson ? BoxShape.circle : BoxShape.rectangle,
               borderRadius: isPerson ? null : BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.white),
+            child: Icon(icon, color: Colors.white, size: 28), // Icon kategori lebih besar
             alignment: Alignment.center,
           ),
           const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 14), // Teks kategori lebih besar
             textAlign: TextAlign.center,
           ),
         ],
@@ -285,11 +285,12 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
       shape: const CircularNotchedRectangle(),
       notchMargin: 6,
       child: SizedBox(
-        height: 48,
+        height: 64, // Naikkan dari 56 ke 64
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max, // Pastikan ini
             children: [
               // 2 menu kiri
               ...List.generate(
@@ -322,17 +323,19 @@ class _MyPPDBHomePageState extends State<MyPPDBHomePage> {
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center, // Tambahkan ini
           children: [
             Icon(
               icon,
               color: isActive ? const Color(0xFF24D674) : Colors.grey,
+              size: 24, // Perkecil dari 26 ke 24
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
                 color: isActive ? const Color(0xFF24D674) : Colors.grey,
-                fontSize: 11,
+                fontSize: 12, // Perkecil dari 13 ke 12
                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
               ),
             ),
