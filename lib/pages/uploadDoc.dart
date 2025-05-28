@@ -148,6 +148,7 @@ class _uploaddocState extends State<Uploaddoc> {
                 controller: akteController,
                 isUploaded: akteUrl != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     akteBytes = bytes;
                     akteUrl = url;
@@ -160,6 +161,7 @@ class _uploaddocState extends State<Uploaddoc> {
                 controller: kkController,
                 isUploaded: kkUrl != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     kkBytes = bytes;
                     kkUrl = url;
@@ -172,6 +174,7 @@ class _uploaddocState extends State<Uploaddoc> {
                 controller: ktpAyahController,
                 isUploaded: ktpAyahBytes != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     ktpAyahBytes = bytes;
                     ktpAyahUrl = url;
@@ -184,6 +187,7 @@ class _uploaddocState extends State<Uploaddoc> {
                 controller: ktpIbuController,
                 isUploaded: ktpIbuBytes != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     ktpIbuBytes = bytes;
                     ktpIbuUrl = url;
@@ -192,10 +196,11 @@ class _uploaddocState extends State<Uploaddoc> {
               ),
               const SizedBox(height: 20),
               _buildUploadField(
-                label: 'Upload Ijazah',
+                label: 'Upload Ijazah SMP',
                 controller: ijazahController,
                 isUploaded: ijazahBytes != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     ijazahBytes = bytes;
                     ijazahUrl = url;
@@ -204,10 +209,11 @@ class _uploaddocState extends State<Uploaddoc> {
               ),
               const SizedBox(height: 20),
               _buildUploadField(
-                label: 'Upload Foto',
+                label: 'Upload Foto 3x4 / 4x6',
                 controller: fotoController,
                 isUploaded: fotoBytes != null,
                 onUpload: (bytes, url) {
+                  if (!mounted) return;
                   setState(() {
                     fotoBytes = bytes;
                     fotoUrl = url;
