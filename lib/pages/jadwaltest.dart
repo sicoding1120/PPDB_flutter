@@ -18,6 +18,7 @@ bool isLoading = true;
 DataStudent? dataStudent;
 String? namaPeserta;
 var StudentData = {};
+List<dynamic> studentList = [];
 
 class _JadwaltestState extends State<Jadwaltest> {
   @override
@@ -41,8 +42,12 @@ class _JadwaltestState extends State<Jadwaltest> {
         Uri.parse('http://localhost:5000/student/user/$userId'),
       );
       if (studentRes.statusCode == 200) {
-        StudentData = json.decode(studentRes.body)['data'];
-        namaPeserta = StudentData['fullName'] ?? '';
+        final data = json.decode(studentRes.body)['data'];
+        if (data is List) {
+          studentList = data;
+        } else if (data is Map) {
+          studentList = [data];
+        }
       }
     } catch (e) {
       // Handle error
@@ -74,114 +79,129 @@ class _JadwaltestState extends State<Jadwaltest> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: (StudentData['status'] == null || StudentData['status'] == "PENDING")
-                      ? Card(
-                          color: Colors.orange[50],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                            child: Column(
-                              children: [
-                                Icon(Icons.info_outline, color: Colors.orange, size: 48),
-                                SizedBox(height: 16),
-                                Text(
-                                  'Belum ada konfirmasi',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Status pendaftaran kamu masih pending. Silakan tunggu konfirmasi dari panitia.',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+          : studentList.isEmpty
+              ? Center(
+                  child: Text(
+                    'Belum ada data peserta.',
+                    style: TextStyle(color: Colors.orange, fontSize: 16),
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: studentList.map<Widget>((student) {
+                        if (student['status'] == 'PASSED') {
+                          // Card untuk siswa yang lolos
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          ),
-                        )
-                      : Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 24,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.network(
-                                      'https://res.cloudinary.com/dqbtkdora/image/upload/v1747621151/yxjmhkvfpu56xad3lz6c.png',
-                                      width: screenWidth * 0.10,
-                                    ),
-                                    RichText(
-                                      text: const TextSpan(
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Arial',
+                            elevation: 3,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 24,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Image.network(
+                                        'https://res.cloudinary.com/dqbtkdora/image/upload/v1747621151/yxjmhkvfpu56xad3lz6c.png',
+                                        width: screenWidth * 0.10,
+                                      ),
+                                      RichText(
+                                        text: const TextSpan(
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Arial',
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: 'MY',
+                                              style: TextStyle(color: Colors.orange),
+                                            ),
+                                            TextSpan(
+                                              text: 'PPDB',
+                                              style: TextStyle(color: Colors.green),
+                                            ),
+                                          ],
                                         ),
-                                        children: [
-                                          TextSpan(
-                                            text: 'MY',
-                                            style: TextStyle(color: Colors.orange),
-                                          ),
-                                          TextSpan(
-                                            text: 'PPDB',
-                                            style: TextStyle(color: Colors.green),
-                                          ),
-                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'Kepada Yth Walisantri Dari ${student['fullName']} , Berikut Informasi Untuk jadwal tes Seleksi Ananda:',
+                                    style: const TextStyle(fontSize: 16, height: 1.5),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'waktu: 10.00 – 14.00',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'Lokasi: SMK MADINATUL QURAN',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'Diharapkan Agar ananda datang 30 menit Sebelum test dimulai',
+                                    style: TextStyle(fontSize: 16, height: 1.5),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Card unik untuk siswa yang belum lolos
+                          return Card(
+                            color: Colors.orange[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 24,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.info_outline, color: Colors.orange, size: 36),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      'Peserta atas nama ${student['fullName']} belum lolos seleksi. Status: ${student['status'] ?? '-'}',
+                                      style: const TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                Text(
-                                  'Kepada Yth Walisantri Dari $namaPeserta , Berikut Informasi Untuk jadwal tes Seleksi Ananda:',
-                                  style: const TextStyle(fontSize: 16, height: 1.5),
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'waktu: 10.00 – 14.00',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Lokasi: SMK MADINATUL QURAN',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Diharapkan Agar ananda datang 30 menit Sebelum test dimulai',
-                                  style: TextStyle(fontSize: 16, height: 1.5),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        }
+                      }).toList(),
+                    ),
+                  ),
                 ),
-              ),
-            ),
     );
   }
 }

@@ -30,7 +30,7 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
       await userCredential.user?.updateDisplayName(username);
       print('Firebase user created: ${userCredential.user?.uid}');
-      // 2. Register ke backend
+      // 2. Register ke backend (yang sekarang juga login & return token)
       Uri urlregister = Uri.parse('http://localhost:5000/auth/register');
       var response = await http.post(
         urlregister,
@@ -44,15 +44,41 @@ class AuthService {
       );
       print('Backend response: ${response.statusCode} - ${response.body}');
 
-      if (response.statusCode == 200) {
-        // Sukses dua-duanya
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registrasi berhasil, silakan login.')),
-        );
-        context.go('/login');
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var responseData = jsonDecode(response.body);
+
+        // Cek apakah ID dan token ada
+        if (responseData['data']?['ID'] == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Registrasi gagal: Data user tidak lengkap dari server!')),
+          );
+          return null;
+        }
+
+        DataUser loginData = DataUser.fromJson({
+          'ID': responseData['data']['ID'],
+          'username': responseData['data']['username'],
+          'email': responseData['data']['email'],
+          'password': password,
+          'phone': responseData['data']['phone'],
+        });
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('Login', jsonEncode(loginData.toJson()));
+        await prefs.setString('UserId', responseData['data']['ID']);
+        await prefs.setString('access_token', responseData['data']['access_token'] ?? '');
+        await prefs.setString('refresh_token', responseData['data']['refresh_token'] ?? '');
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Registrasi & login berhasil!')),
+          );
+          context.goNamed(myRouter.Home);
+        }
         return userCredential.user;
       } else {
         // Backend gagal, rollback Firebase
+        await _auth.currentUser?.delete();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Registrasi gagal di server.')));
@@ -110,12 +136,14 @@ class AuthService {
           'phone': phone,
         }),
       );
-      // print('Backend response: ${response.statusCode} - ${response.body}');
 
       var responseData = jsonDecode(response.body);
-      print(responseData["data"]);
 
-      if (response.statusCode == 201 ) {
+      if (response.statusCode == 201) {
+        // 2. Jika backend sukses, baru login ke Firebase
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email.trim(), password: password);
+
         DataUser loginData = DataUser.fromJson({
           'ID': responseData['data']['ID'],
           'username': responseData['data']['username'],
@@ -123,28 +151,22 @@ class AuthService {
           'password': responseData['data']['password'],
           'phone': responseData['data']['phone'],
         });
-        print("Login data: ${loginData.toJson()}");
-        // Simpan data login ke SharedPreferences
-        //Shared
+
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('Login', jsonEncode(loginData.toJson()));
-        await prefs.setString('UserId', responseData['data']['ID']); // <-- Tambahkan ini!
-        print("Shared: ${prefs.getString('Login')}");
-        print("UserId: ${prefs.getString('UserId')}");
+        await prefs.setString('UserId', responseData['data']['ID']);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login berhasil')),
-          // SnackBar(content: Text('Login berhasil di server: ${response.body}')),
         );
         context.goNamed(myRouter.Home);
+        return userCredential.user;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login gagal di server: ${response.body}')),
+        );
+        return null;
       }
-
-      // 2. Jika backend sukses, login ke Firebase
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email.trim(), password: password);
-
-      context.goNamed(myRouter.Home); // Navigasi ke Home
-      return userCredential.user;
     } on FirebaseAuthException catch (e) {
       String errorMsg = 'Terjadi kesalahan saat login.';
       if (e.code == 'user-not-found') {
@@ -157,10 +179,12 @@ class AuthService {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(errorMsg)));
+      return null;
     } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Login gagal: ${e.toString()}')));
+      return null;
     }
   }
 

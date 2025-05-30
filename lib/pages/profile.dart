@@ -79,6 +79,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               );
                               if (confirm == true) {
                                 await FirebaseAuth.instance.signOut();
+                                final prefs = await SharedPreferences.getInstance();
+                                await prefs.remove('Login'); // <-- Hapus data user di local
                                 context.go("/login");
                               }
                             },

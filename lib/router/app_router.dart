@@ -10,6 +10,7 @@ import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
 import 'package:ppdb_project/pages/Test.dart';
 import 'package:ppdb_project/pages/hasiltest.dart';
+import 'package:ppdb_project/pages/isiUjian.dart';
 import 'package:ppdb_project/pages/isiUjian_agama.dart';
 import 'package:ppdb_project/pages/isiUjian_bahasa.dart';
 import 'package:ppdb_project/pages/isiUjian_psikotes.dart';
@@ -99,6 +100,10 @@ final router = [
     builder: (context, state) => Payment(),
   ),
 
+  GoRoute(path: "/isiUjian",
+    name: myRouter.isiujian,
+    builder: (context, state) => IsiUjianPage(extra: state.extra as Map<String, dynamic>),
+  ),
   GoRoute(path: "/isiujianAgama",
     name: myRouter.isiujianAgama,
     builder: (context, state) => isiujianAgama(),
