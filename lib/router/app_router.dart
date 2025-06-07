@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ppdb_project/pages/BSI_1.dart';
 import 'package:ppdb_project/pages/Forget_Screen.dart';
 import 'package:ppdb_project/pages/Home_Screen.dart';
 import 'package:ppdb_project/pages/Login_Screen.dart';
+import 'package:ppdb_project/pages/QRIS_1.dart';
+import 'package:ppdb_project/pages/QRIS_2.dart';
 import 'package:ppdb_project/pages/Register_Screen.dart';
 import 'package:ppdb_project/pages/Splash_Screen.dart';
 import 'package:ppdb_project/pages/Test.dart';
@@ -122,6 +125,21 @@ final router = [
   GoRoute(path: "/popupHasil",
     name: myRouter.popupHasil,
     builder: (context, state) => Popuphasil(),
+  ),
+
+  GoRoute(path: "/bsi1",
+    name: myRouter.bsi1,
+    builder: (context, state) => const Bsi1(),
+  ),
+
+  GoRoute(path: "/QRIS1",
+    name: myRouter.QRIS1,
+    builder: (context, state) => const Qris1(),
+  ),
+
+  GoRoute(path: "/QRIS2",
+    name: myRouter.QRIS2,
+    builder: (context, state) => const PaymentSuccess(),
   ),
 
   
