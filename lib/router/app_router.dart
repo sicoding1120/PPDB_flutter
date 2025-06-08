@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ppdb_project/pages/BSI_1.dart';
+import 'package:ppdb_project/pages/BSI_2.dart';
 import 'package:ppdb_project/pages/Forget_Screen.dart';
 import 'package:ppdb_project/pages/Home_Screen.dart';
 import 'package:ppdb_project/pages/Login_Screen.dart';
@@ -129,7 +130,12 @@ final router = [
 
   GoRoute(path: "/bsi1",
     name: myRouter.bsi1,
-    builder: (context, state) => const Bsi1(),
+    builder: (context, state) => const PembayaranBSI(),
+  ),
+
+  GoRoute(path: "/bsi2",
+    name: myRouter.bsi2,
+    builder: (context, state) => const Bsi2(),
   ),
 
   GoRoute(path: "/QRIS1",

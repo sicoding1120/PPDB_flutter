@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppdb_project/router/app_router.dart';
+import 'package:ppdb_project/utils/GenereteURL.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class Qris1 extends StatefulWidget {
   const Qris1({super.key});
@@ -10,6 +12,9 @@ class Qris1 extends StatefulWidget {
 }
 
 class _Qris1State extends State<Qris1> {
+  final String name = 'PPDB';
+  final int amount = 0;
+
   final Color greenColor = const Color(0xFF24D674);
 
   final String backgroundImageUrl =
@@ -21,12 +26,11 @@ class _Qris1State extends State<Qris1> {
   final String sekolahLogo =
       'https://res.cloudinary.com/dqbtkdora/image/upload/v1747621151/yxjmhkvfpu56xad3lz6c.png';
 
-  final String qrImage =
-      'https://api.qrserver.com/v1/create-qr-code/?data=PPDB&size=200x200';
-
   @override
   Widget build(BuildContext context) {
+    final paymentUrl = GeneratePaymentUrl(name, amount);
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -72,17 +76,9 @@ class _Qris1State extends State<Qris1> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.network(qrisLogo, height: 40),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Text(
-                              "QR Code Standar\nPembayaran Nasional",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                              maxLines: 2,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Image.network(sekolahLogo, height: 40),
+                          Image.network(qrisLogo, height: 60), // diperbesar
+                          const SizedBox(width: 100),           // jarak lebih lebar
+                          Image.network(sekolahLogo, height: 60), // diperbesar
                         ],
                       ),
                       const SizedBox(height: 32),
@@ -92,24 +88,26 @@ class _Qris1State extends State<Qris1> {
                       ),
                       const SizedBox(height: 20),
                       // QR Code
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                              offset: Offset(0, 4),
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            QrImageView(
+                              data: paymentUrl,
+                              version: QrVersions.auto,
+                              size: 200.0,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Scan QR ini dengan aplikasi pembayaran Anda",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
-                        ),
-                        child: Image.network(
-                          qrImage,
-                          height: size.width * 0.55,
-                          width: size.width * 0.55,
-                          fit: BoxFit.cover,
                         ),
                       ),
                       const SizedBox(height: 28),
@@ -120,7 +118,7 @@ class _Qris1State extends State<Qris1> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
-                      // Tombol kembali
+                      // Tombol kembali/selanjutnya
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
@@ -133,10 +131,10 @@ class _Qris1State extends State<Qris1> {
                             ),
                           ),
                           onPressed: () {
-                            context.goNamed(myRouter.QRIS2); // Ganti dengan rute yang sesuai
+                            context.goNamed(myRouter.QRIS2);
                           },
                           icon: const Icon(Icons.arrow_forward_rounded),
-                          label: const Text("selanjutnya"),
+                          label: const Text("Selanjutnya"),
                         ),
                       ),
                     ],

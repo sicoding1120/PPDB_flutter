@@ -3,21 +3,23 @@ import 'package:go_router/go_router.dart';
 // Jika pakai go_router, import juga:
 // import 'package:go_router/go_router.dart';
 
-class PaymentSuccess extends StatefulWidget {
-  const PaymentSuccess({super.key});
-
-  @override
-  State<PaymentSuccess> createState() => _PaymentSuccessState();
-}
-
-class _PaymentSuccessState extends State<PaymentSuccess> {
-  final Color greenColor = const Color(0xFF24D674);
-
-  final String qrImageUrl =
-      'https://api.qrserver.com/v1/create-qr-code/?data=PPDB&size=200x200'; // ganti sesuai URL Cloudinary QR Code
+class Bsi2 extends StatelessWidget {
+  const Bsi2({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Ambil data dari GoRouter
+    final extra = GoRouterState.of(context).extra as Map<String, dynamic>? ?? {};
+    final namaPengirim = extra['namaPengirim'] ?? '';
+    final namaSiswa = extra['namaSiswa'] ?? '';
+    final nominal = extra['nominal'] ?? '';
+    final keterangan = extra['keterangan'] ?? '';
+
+    final Color greenColor = const Color(0xFF24D674);
+
+    final String qrImageUrl =
+        'https://api.qrserver.com/v1/create-qr-code/?data=PPDB&size=200x200'; // ganti sesuai URL Cloudinary QR Code
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -30,7 +32,7 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
           },
         ),
         title: const Text(
-          'hasil Pembayaran via QRIS',
+          'hasil pembayaran via BSI',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -51,28 +53,36 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Order Number :'),
-                      Text('32477342psdgfs', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('Nama Pengirim :'),
+                      Text(namaPengirim, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Date :'),
-                      Text('1 Juni 2025', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('Nama Siswa :'),
+                      Text(namaSiswa, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Total :'),
-                      Text('Rp 900.000', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('Nominal :'),
+                      Text(nominal, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Keterangan :'),
+                      Text(keterangan, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],
