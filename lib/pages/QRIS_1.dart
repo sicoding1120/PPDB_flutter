@@ -77,7 +77,7 @@ class _Qris1State extends State<Qris1> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.network(qrisLogo, height: 60), // diperbesar
-                          const SizedBox(width: 100),           // jarak lebih lebar
+                          const SizedBox(width: 150),           // jarak lebih lebar
                           Image.network(sekolahLogo, height: 60), // diperbesar
                         ],
                       ),
@@ -95,7 +95,7 @@ class _Qris1State extends State<Qris1> {
                             QrImageView(
                               data: paymentUrl,
                               version: QrVersions.auto,
-                              size: 200.0,
+                              size: 300.0,
                             ),
                             const SizedBox(height: 12),
                             Text(

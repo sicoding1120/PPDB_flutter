@@ -150,16 +150,7 @@ class Bsi2 extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'INFORMASI PEMBAYARAN',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            const SizedBox(height: 10),
-            Image.network(
-              qrImageUrl,
-              height: 180,
-              width: 180,
-            ),
+           
             const SizedBox(height: 30),
           ],
         ),
